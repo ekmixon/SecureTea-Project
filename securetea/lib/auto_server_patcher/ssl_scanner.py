@@ -84,14 +84,11 @@ class SSLScanner(object):
         """
         self.analyze_payload.update({'host' : self.url})
         # Start analyzing the website
-        self.logger.log(
-            "Analyzing URL: " + self.url,
-            logtype="info"
-        )
+        self.logger.log(f"Analyzing URL: {self.url}", logtype="info")
         resp = self.request_api(self._API_URL, self.analyze_payload)
         self.analyze_payload.pop('startNew')
 
-        while resp['status'] != 'READY' and resp['status'] != 'ERROR':
+        while resp['status'] not in ['READY', 'ERROR']:
             time.sleep(15)
             resp = self.request_api(self._API_URL, self.analyze_payload)
 
@@ -114,8 +111,7 @@ class SSLScanner(object):
         """
         base_data = data['endpoints'][0]['details']
 
-        # Parse the API data into a dict
-        vuln_dict = {
+        return {
             'beastAttack': base_data['vulnBeast'],
             'poodle': base_data['poodle'],
             'poodleTls': base_data['poodleTls'],
@@ -130,8 +126,6 @@ class SSLScanner(object):
             'logjam': base_data['logjam'],
             'drown_attack': base_data['drownVulnerable'],
         }
-
-        return vuln_dict
 
     @staticmethod
     def get_value(key, value):
@@ -202,18 +196,12 @@ class SSLScanner(object):
         Returns:
             None
         """
-        self.logger.log(
-            "Vulnerability Scan Result: " + self.url,
-            logtype="info"
-        )
+        self.logger.log(f"Vulnerability Scan Result: {self.url}", logtype="info")
 
         for vuln, res in dict_value.items():
             if not isinstance(res, bool):
                 res = self.get_value(vuln, res)
-            self.logger.log(
-                str(vuln) + ": " + str(res),
-                logtype="info"
-            )
+            self.logger.log(f"{str(vuln)}: {str(res)}", logtype="info")
 
     def start_scan(self):
         """

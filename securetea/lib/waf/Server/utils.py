@@ -93,10 +93,10 @@ def blacklist_counter(value):
     """
     counter=0
 
-    blacklistpath = Path(os.path.dirname(__file__)).parent + "/rules/blacklist.txt"
+    blacklistpath = f"{Path(os.path.dirname(__file__)).parent}/rules/blacklist.txt"
     try:
         with open(blacklistpath,"r") as b:
-            for word in b.readlines():
+            for word in b:
                 word2=word.strip("\n")
 
                 if word2 in value:

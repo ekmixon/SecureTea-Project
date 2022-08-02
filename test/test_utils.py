@@ -61,11 +61,7 @@ class TestUtils(unittest.TestCase):
         Test check_root.
         """
         user = os.getuid()
-        if user == 0:
-            value = True
-        else:
-            value = False
-
+        value = user == 0
         func_value = utils.check_root()
         if func_value == value:
             return True
@@ -77,10 +73,7 @@ class TestUtils(unittest.TestCase):
         dummy_list = ['127.0.0.1',
                       '127.0.0.2',
                       '127.0.0.3']
-        result = []
-
-        for new_ip in utils.generate_IPs("127.0.0.1-127.0.0.3"):
-            result.append(new_ip)
+        result = list(utils.generate_IPs("127.0.0.1-127.0.0.3"))
 
         self.assertEqual(result, dummy_list)
 
@@ -92,10 +85,7 @@ class TestUtils(unittest.TestCase):
         Test generate_ports.
         """
         dummy_list = [60, 61, 62]
-        result = []
-
-        for port in utils.generate_ports('60-62'):
-            result.append(port)
+        result = list(utils.generate_ports('60-62'))
 
         self.assertEqual(dummy_list, result)
 

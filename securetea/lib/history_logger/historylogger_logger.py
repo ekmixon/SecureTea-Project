@@ -55,8 +55,10 @@ class HistoryLogger(logger.SecureTeaLogger):
             None
         """
         with open(self._PATH, "a") as f:
-            LEGEND = '[' + self.modulename + ']' + ' [' + \
-                           str(time.strftime("%Y-%m-%d %H:%M")) + '] '
+            LEGEND = (
+                f'[{self.modulename}] [' + str(time.strftime("%Y-%m-%d %H:%M"))
+            ) + '] '
+
             message = LEGEND + data + "\n"
             f.write(message)
 

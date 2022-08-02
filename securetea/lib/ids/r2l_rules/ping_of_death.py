@@ -66,8 +66,7 @@ class PingOfDeath(object):
 
             if (load_len >= self._THRESHOLD):
                 source_ip = pkt[scapy.IP].src
-                msg = "Possible ping of death attack detected " \
-                      "from: {}".format(source_ip)
+                msg = f"Possible ping of death attack detected from: {source_ip}"
                 self.logger.log(
                     msg,
                     logtype="warning"

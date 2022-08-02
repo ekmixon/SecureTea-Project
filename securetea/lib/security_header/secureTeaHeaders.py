@@ -41,15 +41,14 @@ class SecureTeaHeaders(object):
                 logtype="error"
             )
             sys.exit(0)
+        elif self.verify_url(url):
+            self.url = url
         else:
-            if self.verify_url(url):
-                self.url = url
-            else:
-                self.logger.log(
-                    "Incorrect URL.",
-                    logtype="error"
-                )
-                sys.exit(0)
+            self.logger.log(
+                "Incorrect URL.",
+                logtype="error"
+            )
+            sys.exit(0)
 
     def call_url(self):
         """
@@ -64,8 +63,7 @@ class SecureTeaHeaders(object):
         Raises:
             None
         """
-        resp = requests.get(self.url)
-        return resp
+        return requests.get(self.url)
 
     @staticmethod
     def verify_url(url):
@@ -82,12 +80,7 @@ class SecureTeaHeaders(object):
             None
         """
         parsed_url = urlparse(url)
-        if ((parsed_url.scheme == 'http' or
-            parsed_url.scheme == 'https') and
-            parsed_url.netloc != ''):
-            return True
-        else:
-            return False
+        return parsed_url.scheme in ['http', 'https'] and parsed_url.netloc != ''
 
     def gather_headers(self):
         """
@@ -103,9 +96,7 @@ class SecureTeaHeaders(object):
             None
         """
         resp = self.call_url()
-        headers_dict = resp.headers
-
-        return headers_dict
+        return resp.headers
 
     def find_insecure_headers(self):
         """
@@ -148,10 +139,7 @@ class SecureTeaHeaders(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         try:
             content_type = headers_dict['X-Content-Type-Options']
@@ -171,14 +159,10 @@ class SecureTeaHeaders(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         try:
-            hsts = headers_dict['Strict-Transport-Security']
-            if hsts:
+            if hsts := headers_dict['Strict-Transport-Security']:
                 self.logger.log(
                     "Strict-Transport-Security set properly.",
                     logtype="info"
@@ -189,14 +173,10 @@ class SecureTeaHeaders(object):
                 logtype="warning"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         try:
-            csp = headers_dict['Content-Security-Policy']
-            if csp:
+            if csp := headers_dict['Content-Security-Policy']:
                 self.logger.log(
                     "Content-Security-Policy set properly.",
                     logtype="info"
@@ -207,14 +187,10 @@ class SecureTeaHeaders(object):
                 logtype="warning"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         try:
-            x_frame = headers_dict['x-frame-options']
-            if x_frame:
+            if x_frame := headers_dict['x-frame-options']:
                 self.logger.log(
                     "X-Frame set properly, safe from X-Frame",
                     logtype="info"
@@ -225,10 +201,7 @@ class SecureTeaHeaders(object):
                 logtype="warning"
             )
         except Exception as e:
-            self.logger.log(
-                "Error ocurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error ocurred: {str(e)}", logtype="error")
 
     def find_http_methods(self):
         """
@@ -293,20 +266,19 @@ class SecureTeaHeaders(object):
                     in cookie._rest.keys()):
                     httponly = True
 
-                logger_msg = (str(cookie_name) + ": " +
-                              "secure: " +
-                              str(cookie.secure) + " HTTP only: " +
-                              str(httponly))
+                logger_msg = (
+                    (f"{str(cookie_name)}: " + "secure: ")
+                    + str(cookie.secure)
+                    + " HTTP only: "
+                ) + str(httponly)
+
 
                 self.logger.log(
                     logger_msg,
                     logtype="info"
                 )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def analyze(self):
         """

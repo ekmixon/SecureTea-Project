@@ -58,17 +58,17 @@ class Deauth(object):
         Returns:
             None
         """
-        if (pkt.haslayer(scapy.Dot11)):
-            if (pkt[scapy.Dot11].subtype == 0xc and
-                int(pkt[scapy.Dot11].type) == 0):
-                if (pkt[scapy.Dot11].addr1 == "ff:ff:ff:ff:ff:ff"):
-                    # Give more weightage
-                    self.count = self.count + 2
-                else:
-                    # Give less weightage
-                    self.count = self.count + 1
-                if self.start_time is None:
-                    self.start_time = time.time()
+        if (pkt.haslayer(scapy.Dot11)) and (
+            pkt[scapy.Dot11].subtype == 0xC and int(pkt[scapy.Dot11].type) == 0
+        ):
+            if (pkt[scapy.Dot11].addr1 == "ff:ff:ff:ff:ff:ff"):
+                # Give more weightage
+                self.count = self.count + 2
+            else:
+                # Give less weightage
+                self.count = self.count + 1
+            if self.start_time is None:
+                self.start_time = time.time()
 
         if self.start_time is not None:
             end_time = time.time()

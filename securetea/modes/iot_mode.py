@@ -98,10 +98,7 @@ class IoTMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("ids"):
             try:
@@ -123,10 +120,7 @@ class IoTMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
             try:
                 self.logger.log(
@@ -143,10 +137,7 @@ class IoTMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def create_process(self):
         """
@@ -199,10 +190,7 @@ class IoTMode(object):
                 process.terminate()
 
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def start_iot_mode(self):
         """

@@ -61,10 +61,7 @@ class FirewallMonitor(object):
         result, error = utils.excecute_command('service --status-all')
 
         if error:
-            self.logger.log(
-                "Scanning for servcies failed: " + str(error),
-                logtype="error"
-            )
+            self.logger.log(f"Scanning for servcies failed: {str(error)}", logtype="error")
 
         if result:
             services = re.findall(r'\[\s\+\s\]\s*([a-zA-Z0-9\-\_]*)',
@@ -74,10 +71,7 @@ class FirewallMonitor(object):
                 if service not in self.services_list:
                     self.services_list.append(service)
 
-            self.logger.log(
-                "Services: " + str(', '.join(self.services_list)),
-                logtype="info"
-            )
+            self.logger.log("Services: " + ', '.join(self.services_list), logtype="info")
 
     def check_open_ports(self):
         """
@@ -97,9 +91,9 @@ class FirewallMonitor(object):
 
         if error:
             self.logger.log(
-                "Scanning for open ports failed: " + str(error),
-                logtype="error"
+                f"Scanning for open ports failed: {str(error)}", logtype="error"
             )
+
 
         if result:
             open_ports = re.findall(r'(LISTENING|CONNECTED)\s+(\d+)(\s.*)',
@@ -109,10 +103,7 @@ class FirewallMonitor(object):
                 if port[1] not in self.open_ports:
                     self.open_ports.append(port[1])
 
-            self.logger.log(
-                "Open ports: " + str(', '.join(self.open_ports)),
-                logtype="info"
-            )
+            self.logger.log("Open ports: " + ', '.join(self.open_ports), logtype="info")
 
     def network_usage(self):
         """
@@ -169,9 +160,10 @@ class FirewallMonitor(object):
 
         if error:
             self.logger.log(
-                "Scanning for active process failed: " + str(error),
-                logtype="error"
+                f"Scanning for active process failed: {str(error)}",
+                logtype="error",
             )
+
 
         if output:
             process_details = re.findall(r'(\d{2}:\d{2})\s*?.*((\[|/)[a-zA-Z0-9\-/\]:_]*)',
@@ -180,10 +172,7 @@ class FirewallMonitor(object):
                 temp_dict = {process[0]: process[1].strip('/[]')}
                 self.process_list.append(temp_dict)
 
-            self.logger.log(
-                    "Active process: " + str(self.process_list),
-                    logtype="info"
-            )
+            self.logger.log(f"Active process: {str(self.process_list)}", logtype="info")
 
     def startMonitoring(self):
         """
@@ -201,29 +190,17 @@ class FirewallMonitor(object):
         current_time, error = utils.excecute_command('date')
 
         if error:
-            self.logger.log(
-                "Time error: " + str(error),
-                logtype="error"
-            )
+            self.logger.log(f"Time error: {str(error)}", logtype="error")
         if current_time:
-            self.logger.log(
-                "Time: " + str(current_time),
-                logtype="info"
-            )
+            self.logger.log(f"Time: {str(current_time)}", logtype="info")
 
         os_details, error = utils.excecute_command('uname -a')
 
         if error:
-            self.logger.log(
-                    "OS Detail error: " + str(error),
-                    logtype="error"
-            )
+            self.logger.log(f"OS Detail error: {str(error)}", logtype="error")
 
         if os_details:
-            self.logger.log(
-                    "OS Details: " + str(os_details),
-                    logtype="info"
-            )
+            self.logger.log(f"OS Details: {str(os_details)}", logtype="info")
 
         while True:
 

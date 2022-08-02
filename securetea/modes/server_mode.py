@@ -110,10 +110,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
         if self.cred.get("waf"):
             try:
                 self.logger.log(
@@ -137,10 +134,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
 
 
@@ -164,10 +158,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("auto_server_patcher"):
             try:
@@ -187,10 +178,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("antivirus"):
             try:
@@ -213,10 +201,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         # Only debug configuratons are required for System Log Monitor, hence create them plainly
         try:
@@ -232,10 +217,7 @@ class ServerMode(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("web_deface"):
             try:
@@ -258,10 +240,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("server_log"):
             try:
@@ -288,10 +267,7 @@ class ServerMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def create_process(self):
         """
@@ -364,10 +340,7 @@ class ServerMode(object):
                 process.terminate()
 
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def start_server_mode(self):
         """

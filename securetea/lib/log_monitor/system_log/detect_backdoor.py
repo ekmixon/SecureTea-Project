@@ -59,7 +59,7 @@ class DetectBackdoor(object):
             return
 
         # Initialize uid to username dict
-        self.id_username = dict()
+        self.id_username = {}
 
     def parse_log_file(self):
         """

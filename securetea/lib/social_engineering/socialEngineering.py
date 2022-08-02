@@ -41,7 +41,7 @@ class SecureTeaSocialEngineering(object):
 		)
 
 	def check_email_rep(self, email_id):
-		url = "https://emailrep.io/" + email_id
+		url = f"https://emailrep.io/{email_id}"
 		resp = requests.get(url=url)
 		return resp.ok, resp.json()
 
@@ -73,7 +73,4 @@ class SecureTeaSocialEngineering(object):
 					logtype="error"
 				)
 		except Exception as e:
-			self.logger.log(
-				"Error occurred: " + str(e),
-				logtype="error"
-			)
+			self.logger.log(f"Error occurred: {str(e)}", logtype="error")

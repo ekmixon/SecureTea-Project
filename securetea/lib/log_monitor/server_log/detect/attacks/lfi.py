@@ -50,7 +50,7 @@ class LFI(object):
         self.payloads = utils.open_file(self.PAYLOAD_FILE)
 
         # Logged IP list
-        self.logged_IP = list()
+        self.logged_IP = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -72,20 +72,21 @@ class LFI(object):
         """
         for ip in data.keys():
             get_req = data[ip]["get"]
-            if (self.payload_match(get_req)):
-                if ip not in self.logged_IP:  # if IP not logged earlier
-                    self.logged_IP.append(ip)
-                    msg = "Possible LFI injection detected from: " + str(ip) + \
-                          " on: " + utils.epoch_to_date(data[ip]["ep_time"][0])
-                    self.logger.log(
-                        msg,
-                        logtype="warning"
-                    )
-                    utils.write_ip(str(ip))
-                    # Generate CSV report using OSINT tools
-                    self.osint_obj.perform_osint_scan(ip.strip(" "))
-                    # Write malicious IP to file, to teach Firewall about the IP
-                    write_mal_ip(ip.strip(" "))
+            if (self.payload_match(get_req)) and ip not in self.logged_IP:
+                self.logged_IP.append(ip)
+                msg = (
+                    f"Possible LFI injection detected from: {str(ip)}" + " on: "
+                ) + utils.epoch_to_date(data[ip]["ep_time"][0])
+
+                self.logger.log(
+                    msg,
+                    logtype="warning"
+                )
+                utils.write_ip(str(ip))
+                # Generate CSV report using OSINT tools
+                self.osint_obj.perform_osint_scan(ip.strip(" "))
+                # Write malicious IP to file, to teach Firewall about the IP
+                write_mal_ip(ip.strip(" "))
 
     def payload_match(self, get_req):
         """

@@ -32,7 +32,7 @@ def login():
         if ns != NETWORK_SECRET:
             return 'Wrong secret', 402
     except KeyError as e:
-        return jsonify(success=False, message="%s not sent in the request" % e.args), 400
+        return jsonify(success=False, message=f"{e.args} not sent in the request"), 400
     user = User.query.filter(User.username == username).first()
     if user is None or not user.check_password(password):
         return "401", 401
@@ -51,7 +51,7 @@ def logout():
     try:
         username = request.json['username']
     except KeyError as e:
-        return jsonify(success=False, message="%s not sent in the request" % e.args), 400
+        return jsonify(success=False, message=f"{e.args} not sent in the request"), 400
     try:
         while(True):
             logged_in.remove(username)
@@ -70,7 +70,7 @@ def create_user():
         if ns != NETWORK_SECRET:
             return 'Wrong secret', 402
     except KeyError as e:
-        return jsonify(success=False, message="%s not sent in the request" % e.args), 400
+        return jsonify(success=False, message=f"{e.args} not sent in the request"), 400
 
     u = User(username, password)
     db.session.add(u)

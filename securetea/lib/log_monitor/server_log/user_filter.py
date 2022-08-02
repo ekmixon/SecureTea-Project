@@ -39,18 +39,14 @@ class UserFilter(object):
             debug=debug
         )
 
-        if ip_list:
-            self.ip = ip_list
-        else:
-            self.ip = []  # Initialize as empty list
-
+        self.ip = ip_list or []
         if status_code:
             self.status_code = [int(status) for status in status_code]
         else:
             self.status_code = []  # Initialize as empty list
 
         # List of logged IPs
-        self.logged_IP = list()  # Don't log these IPs again
+        self.logged_IP = []
 
     def filter_user_criteria(self, data):
         """
@@ -67,26 +63,32 @@ class UserFilter(object):
             None
         """
         for ip in data.keys():
-            if (ip in self.ip):  # Look for IP match
-                # User rule matched
-                if ip not in self.logged_IP:  # Logged earlier or not
-                    self.logged_IP.append(ip)
-                    self.generate_log_report(ip, data)
+            if (ip in self.ip) and ip not in self.logged_IP:
+                self.logged_IP.append(ip)
+                self.generate_log_report(ip, data)
 
         for ip in data.keys():  # Look for status code match
             status_code = data[ip]["status_code"]
             for index, code in enumerate(status_code):
-                if code in self.status_code:
-                    # User rule matched
-                    if ip not in self.logged_IP:  # Logged earlier or not
-                        self.logged_IP.append(ip)
-                        msg = "IP: " + str(ip) + " GET: " + str(data[ip]["get"][index]) + \
-                              " " + "Status code: " + str(code) + \
-                              " on: " + utils.epoch_to_date(data[ip]["ep_time"][index])
-                        self.logger.log(
-                            msg,
-                            logtype="info"
+                if code in self.status_code and ip not in self.logged_IP:
+                    self.logged_IP.append(ip)
+                    msg = (
+                        (
+                            (
+                                f"IP: {str(ip)} GET: "
+                                + str(data[ip]["get"][index])
+                                + " "
+                            )
+                            + "Status code: "
                         )
+                        + str(code)
+                        + " on: "
+                    ) + utils.epoch_to_date(data[ip]["ep_time"][index])
+
+                    self.logger.log(
+                        msg,
+                        logtype="info"
+                    )
 
     def generate_log_report(self, ip, data):
         """
@@ -104,9 +106,12 @@ class UserFilter(object):
             None
         """
         for index, req in enumerate(data[ip]["get"]):
-            msg = "IP: " + str(ip) + " GET: " + str(req) + \
-                  " " + "Status Code: " + str(data[ip]["status_code"][index]) + \
-                  " on: " + utils.epoch_to_date(data[ip]["ep_time"][index])
+            msg = (
+                ((f"IP: {str(ip)} GET: {str(req)}" + " ") + "Status Code: ")
+                + str(data[ip]["status_code"][index])
+                + " on: "
+            ) + utils.epoch_to_date(data[ip]["ep_time"][index])
+
             # Log the message
             self.logger.log(
                 msg,

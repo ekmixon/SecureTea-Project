@@ -57,9 +57,12 @@ class SecureTeaUserLogger():
             debug (bool): Script validity
         """
 
-        self.LEGEND = self.VIOLET + '[' + ']' + \
-            '  ' + self.YELLOW + '[ ' + \
-            str(time.strftime("%Y-%m-%d %H:%M")) + ' ]  '
+        self.LEGEND = (
+            (((f'{self.VIOLET}[]' + '  ') + self.YELLOW) + '[ ')
+            + str(time.strftime("%Y-%m-%d %H:%M"))
+            + ' ]  '
+        )
+
         self.debug = debug
 
     def addUsers(self):
@@ -85,7 +88,7 @@ class SecureTeaUserLogger():
         for user in users:
             if user not in cur_users:
                 connection.execute("DELETE FROM USERS WHERE NAME=\"" + \
-                                    user[0] + "\" AND IP=\"" + user[1] + "\"")
+                                        user[0] + "\" AND IP=\"" + user[1] + "\"")
                 message += ("REMOVED USER:- NAME: " +
                             user[0] + " IP: " + user[1] + "\n")
 
@@ -94,7 +97,7 @@ class SecureTeaUserLogger():
                 connection.execute("INSERT INTO USERS (NAME, IP, dt) \
                     VALUES (?, ?, ?)", (user[0], user[1], time.strftime("%Y-%m-%d %H:%M")))
                 connection.commit()
-                message += "ADDED USER:- NAME: " + user[0] + " IP: " + user[1] + "\n"
+                message += f"ADDED USER:- NAME: {user[0]} IP: {user[1]}" + "\n"
         print(self.LEGEND + self.OKGREEN + message + self.ENDC)
         return message
 

@@ -47,7 +47,7 @@ class TestFailedLogin(unittest.TestCase):
         # Create FailedLogin object
         self.failedlogin_obj = FailedLogin()
         self.failedlogin_obj.update_user_dict("username", "Jun 3", 1, 1)
-        hashed_username = "username" + self.failedlogin_obj.SALT + "Jun 3"
+        hashed_username = f"username{self.failedlogin_obj.SALT}Jun 3"
         self.assertTrue(self.failedlogin_obj.user_to_count.get(hashed_username))
         temp_dict = {
             "date": "Jun 3",

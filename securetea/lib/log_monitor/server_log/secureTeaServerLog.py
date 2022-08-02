@@ -64,21 +64,9 @@ class SecureTeaServerLog(object):
             status_code = utils.get_list(status_code)
 
         # Check the variables
-        if log_file == "":
-            log_file = None
-        else:
-            log_file = log_file.strip(" ")
-
-        if log_type == "":
-            log_type = None
-        else:
-            log_type = log_type.strip(" ")
-
-        if window == "":
-            window = 30
-        else:
-            window = int(window)
-
+        log_file = None if log_file == "" else log_file.strip(" ")
+        log_type = None if log_type == "" else log_type.strip(" ")
+        window = 30 if window == "" else int(window)
         # Create Engine
         self.engine_obj = Engine(
                         debug=debug,

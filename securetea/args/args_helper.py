@@ -39,39 +39,36 @@ def iterate_dict(config_dict, default):
     """
     skip = False
     for key, item in config_dict.items():
-        if not skip:
-            if not isinstance(item, dict):
-                if int(platform.sys.version_info[0]) < 3:  # if Python 2.X.X
-                    val = input('>> Enter {}: '
-                                    .format(item)).strip()
-                else:
-                    val = str(input('>> Enter {}: '
-                              .format(item))).strip()
-                if (val == 's' or
-                    val == 'S'):
-                    skip = True
-                    return None
-                elif val == '':
-                    config_dict[key] = default[key]
-                else:
-                    config_dict[key] = val
-            else:
-                sub_dict = iterate_dict(config_dict[key],
-                                        default[key])
-                if sub_dict is not None:
-                    config_dict[key] = sub_dict
-                else:
-                    return None
-        else:
+        if skip:
             return None
+        if not isinstance(item, dict):
+            val = (
+                input(f'>> Enter {item}: ').strip()
+                if int(platform.sys.version_info[0]) < 3
+                else str(input(f'>> Enter {item}: ')).strip()
+            )
+
+            if val in ['s', 'S']:
+                skip = True
+                return None
+            elif val == '':
+                config_dict[key] = default[key]
+            else:
+                config_dict[key] = val
+        else:
+            sub_dict = iterate_dict(config_dict[key],
+                                    default[key])
+            if sub_dict is not None:
+                config_dict[key] = sub_dict
+            else:
+                return None
     return config_dict
 
 
 def read_creds(path):
     """Returns JSON creds as dict."""
     with open(path) as f:
-        creds = json.load(f)
-        return creds
+        return json.load(f)
 
 
 def load_default(key):
@@ -151,31 +148,11 @@ class ArgsHelper(object):
         self.cred = {}
         self.args = args
 
-        if self.args.debug:
-            self.cred['debug'] = self.args.debug
-        else:
-            self.cred['debug'] = False
-
-        if self.args.hist:
-            self.cred['history_logger'] = self.args.hist
-        else:
-            self.cred['history_logger'] = False
-
-        if self.args.clamav:
-            self.cred['clamav'] = self.args.clamav
-        else:
-            self.cred['clamav'] = False
-
-        if self.args.yara:
-            self.cred['yara'] = self.args.yara
-        else:
-            self.cred['yara'] = False
-
-        if self.args.skip_config_file:
-            self.cred['skip_config_file'] = self.args.skip_config_file
-        else:
-            self.cred['skip_config_file'] = False
-
+        self.cred['debug'] = self.args.debug or False
+        self.cred['history_logger'] = self.args.hist or False
+        self.cred['clamav'] = self.args.clamav or False
+        self.cred['yara'] = self.args.yara or False
+        self.cred['skip_config_file'] = self.args.skip_config_file or False
         # Initialize SecureTeaConf
         self.securetea_conf = SecureTeaConf()
 

@@ -59,7 +59,7 @@ class PasswordDefect(object):
             return
 
         # Initialize user to password dict
-        self.user_password = dict()
+        self.user_password = {}
 
     def parse_log_file(self):
         """
@@ -100,10 +100,7 @@ class PasswordDefect(object):
         """
         if self.user_password.get(user) is None:
             self.user_password[user] = found_pss
-            self.logger.log(
-                "Password not found for user: {}".format(user),
-                logtype="warning"
-            )
+            self.logger.log(f"Password not found for user: {user}", logtype="warning")
 
     def run(self):
         """

@@ -38,7 +38,7 @@ class FakeAccessPoint(object):
         )
 
         # Initialize access point dictionary
-        self.ap_dict = dict()
+        self.ap_dict = {}
         # Set threshold
         self._THRESHOLD = 3
 
@@ -60,33 +60,33 @@ class FakeAccessPoint(object):
         Returns:
             None
         """
-        if (pkt.haslayer(scapy.Dot11) and
-            pkt.haslayer(scapy.Dot11Beacon)):
-            if (int(pkt[scapy.Dot11].subtype) == 8):
-                # Get BSSID and timestamp
-                bssid = pkt[scapy.Dot11].addr2
-                time_stamp = pkt[scapy.Dot11Beacon].timestamp
+        if (pkt.haslayer(scapy.Dot11) and pkt.haslayer(scapy.Dot11Beacon)) and (
+            int(pkt[scapy.Dot11].subtype) == 8
+        ):
+            # Get BSSID and timestamp
+            bssid = pkt[scapy.Dot11].addr2
+            time_stamp = pkt[scapy.Dot11Beacon].timestamp
 
-                if self.ap_dict.get(bssid) is None:
-                    # If new BSSID
-                    self.ap_dict[bssid] = {
-                        "timestamp": [time_stamp],
-                        "count": 0
-                    }
+            if self.ap_dict.get(bssid) is None:
+                # If new BSSID
+                self.ap_dict[bssid] = {
+                    "timestamp": [time_stamp],
+                    "count": 0
+                }
+            else:
+                index = len(self.ap_dict[bssid]["timestamp"]) - 1
+                last_time = self.ap_dict[bssid]["timestamp"][index]
+                if (last_time > time_stamp):  # Time stamp not in increasing order
+                    count = self.ap_dict[bssid]["count"]
+                    self.ap_dict[bssid]["count"] = count + 1
                 else:
-                    index = len(self.ap_dict[bssid]["timestamp"]) - 1
-                    last_time = self.ap_dict[bssid]["timestamp"][index]
-                    if (last_time > time_stamp):  # Time stamp not in increasing order
-                        count = self.ap_dict[bssid]["count"]
-                        self.ap_dict[bssid]["count"] = count + 1
-                    else:
-                        self.ap_dict[bssid]["timestamp"].append(time_stamp)
+                    self.ap_dict[bssid]["timestamp"].append(time_stamp)
 
         # Compare with threshold
         for bssid in self.ap_dict.keys():
             count = self.ap_dict[bssid]["count"]
             if count > self._THRESHOLD:
                 self.logger.log(
-                    "Possible fake access point detected: {}".format(bssid),
-                    logtype="warning"
+                    f"Possible fake access point detected: {bssid}",
+                    logtype="warning",
                 )

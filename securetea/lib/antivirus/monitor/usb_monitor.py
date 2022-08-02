@@ -71,7 +71,7 @@ class USBMonitor(object):
         self.monitor.filter_by(subsystem="usb")
 
         # List of disks
-        self.disk_list = list()
+        self.disk_list = []
 
         # Regex to extract names of available disks
         self._DISK_REGEX = r"Disk\s([^:]*)"
@@ -111,17 +111,13 @@ class USBMonitor(object):
 
             for line in output:
                 line = line.strip("\n")
-                found = re.findall(self._DISK_REGEX, line)
-                if found:
+                if found := re.findall(self._DISK_REGEX, line):
                     found = found[0].strip(" ")
                     disk_name = found.split("/")[-1]
                     if disk_name not in self.disk_list:
                         self.disk_list.append(disk_name)
         elif error:
-            self.logger.log(
-                "Error occurred: " + str(error),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(error)}", logtype="error")
 
     def get_device_path(self):
         """
@@ -141,17 +137,13 @@ class USBMonitor(object):
             output = output.split("\n")
             for line in output:
                 line = line.strip("\n")
-                found = re.findall(self._DISK_REGEX, line)
-                if found:
+                if found := re.findall(self._DISK_REGEX, line):
                     found = found[0].strip(" ")
                     disk_name = found.split("/")[-1]
                     if disk_name not in self.disk_list:
                         return self.get_block_path(disk_name)
         elif error:
-            self.logger.log(
-                "Error occurred: " + str(error),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(error)}", logtype="error")
             return
 
     def get_block_path(self, disk_name):
@@ -174,17 +166,12 @@ class USBMonitor(object):
 
             for line in output:
                 line = line.strip("\n")
-                found = re.findall(str_match, line)
-                if found:
-                    path = found[0][1]
-                    if path:
+                if found := re.findall(str_match, line):
+                    if path := found[0][1]:
                         self.path_found = True
                         return path
         elif error:
-            self.logger.log(
-                "Error occurred: " + str(error),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(error)}", logtype="error")
             return
 
     def monitor_usb_device(self):
@@ -213,8 +200,7 @@ class USBMonitor(object):
                             )
                             self.logged = True
 
-                        path_name = self.get_device_path()
-                        if path_name:
+                        if path_name := self.get_device_path():
                             self.logger.log(
                                 "Scanning USB device, path: {0}".format(path_name),
                                 logtype="info"
@@ -234,7 +220,7 @@ class USBMonitor(object):
                             # Start scanning the files
                             self.scanner_engine_obj.start_scanner_engine()
 
-                if device.action == "remove":
+                elif device.action == "remove":
                     self.logger.log(
                         "USB device removed",
                         logtype="info"

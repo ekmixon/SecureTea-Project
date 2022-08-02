@@ -62,7 +62,7 @@ class SecureTeaHistoryLogger(object):
         bash_export = 'export PROMPT_COMMAND=\'RETRN_VAL=$?;logger -p local6.debug "$(whoami) $(hostname -I) : $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" )"\''
         log_file = "local6.*    /var/log/securetea_history_logger.log"
         log_rotation = "/var/log/securetea_history_logger.log"
-        
+
         f_create = open("/etc/bash.bashrc", "a+")
         f_create.close()
 
@@ -71,32 +71,29 @@ class SecureTeaHistoryLogger(object):
 
         f_create = open("/etc/rsyslog.d/bash.conf", "a+")
         f_create.close()
-        
+
         f_create = open("/etc/logrotate.d/syslog", "a+")
         f_create.close()
-        
+
         f_create = open("/etc/logrotate.d/rsyslog", "a+")
         f_create.close()
-        
+
         f_bash = open("/etc/bash.bashrc", "r")
         if bash_export in f_bash.read():
             f_bash.close()
         else:
             f_bash.close()
-            f_bash = open("/etc/bash.bashrc", "a")
-            f_bash.write('\n')
-            f_bash.write(bash_export)
-            f_bash.close()
-
+            with open("/etc/bash.bashrc", "a") as f_bash:
+                f_bash.write('\n')
+                f_bash.write(bash_export)
         f_bash = open("/etc/bashrc", "r")
         if bash_export in f_bash.read():
             f_bash.close()
         else:
             f_bash.close()
-            f_bash = open("/etc/bashrc", "a")
-            f_bash.write('\n')
-            f_bash.write(bash_export)
-            f_bash.close()
+            with open("/etc/bashrc", "a") as f_bash:
+                f_bash.write('\n')
+                f_bash.write(bash_export)
         self.logger.printinfo("Bash setup correctly")
 
         f_log_file = open("/etc/rsyslog.d/bash.conf", "r")
@@ -104,10 +101,9 @@ class SecureTeaHistoryLogger(object):
             f_log_file.close()
         else:
             f_log_file.close()
-            f_log_file = open("/etc/rsyslog.d/bash.conf", "a")
-            f_log_file.write('\n')
-            f_log_file.write(log_file)
-            f_log_file.close()
+            with open("/etc/rsyslog.d/bash.conf", "a") as f_log_file:
+                f_log_file.write('\n')
+                f_log_file.write(log_file)
         self.logger.printinfo("Rsys logging rules added")
 
         f_rotation_file = open("/etc/logrotate.d/rsyslog", "r")
@@ -115,25 +111,22 @@ class SecureTeaHistoryLogger(object):
             f_rotation_file.close()
         else:
             f_rotation_file.close()
-            f_rotation_file = open("/etc/logrotate.d/rsyslog", "a")
-            f_rotation_file.write('\n')
-            f_rotation_file.write(log_rotation)
-            f_rotation_file.close()
-
+            with open("/etc/logrotate.d/rsyslog", "a") as f_rotation_file:
+                f_rotation_file.write('\n')
+                f_rotation_file.write(log_rotation)
         f_rotation_file = open("/etc/logrotate.d/syslog", "r")
         if log_rotation in f_rotation_file.read():
             f_rotation_file.close()
         else:
             f_rotation_file.close()
-            f_rotation_file = open("/etc/logrotate.d/syslog", "a")
-            f_rotation_file.write('\n')
-            f_rotation_file.write(log_rotation)
-            f_rotation_file.close()
+            with open("/etc/logrotate.d/syslog", "a") as f_rotation_file:
+                f_rotation_file.write('\n')
+                f_rotation_file.write(log_rotation)
         self.logger.printinfo("Rsys log rotation added")
 
         os.system("sudo service rsyslog restart")
         self.logger.printinfo("rsyslog service restarted")
-        self.logger.printinfo("Logs available at : "+log_rotation)
+        self.logger.printinfo(f"Logs available at : {log_rotation}")
 
         os.system("exec bash")
         os.popen("source /etc/bash.bashrc")
@@ -162,47 +155,35 @@ class SecureTeaHistoryLogger(object):
         log_file = "local6.*    /var/log/securetea_history_logger.log"
         log_rotation = "/var/log/securetea_history_logger.log"
 
-        f_bash = open("/etc/bash.bashrc", "r")
-        f_bash_content = f_bash.read()
-        f_bash.close()
+        with open("/etc/bash.bashrc", "r") as f_bash:
+            f_bash_content = f_bash.read()
         f_bash_content = f_bash_content.replace(bash_export, '')
-        f_bash = open("/etc/bash.bashrc", "w")
-        f_bash.write(f_bash_content)
-        f_bash.close()
-
-        f_bash = open("/etc/bashrc", "r")
-        f_bash_content = f_bash.read()
-        f_bash.close()
+        with open("/etc/bash.bashrc", "w") as f_bash:
+            f_bash.write(f_bash_content)
+        with open("/etc/bashrc", "r") as f_bash:
+            f_bash_content = f_bash.read()
         f_bash_content = f_bash_content.replace(bash_export, '')
-        f_bash = open("/etc/bashrc", "w")
-        f_bash.write(f_bash_content)
-        f_bash.close()
+        with open("/etc/bashrc", "w") as f_bash:
+            f_bash.write(f_bash_content)
         self.logger.printinfo("Bash config removed")
 
-        f_log_file = open("/etc/rsyslog.d/bash.conf", "r")
-        f_log_file_content = f_log_file.read()
-        f_log_file.close()
+        with open("/etc/rsyslog.d/bash.conf", "r") as f_log_file:
+            f_log_file_content = f_log_file.read()
         f_log_file_content = f_log_file_content.replace(log_file, '')
-        f_log_file = open("/etc/rsyslog.d/bash.conf", "w")
-        f_log_file.write(f_log_file_content)
-        f_log_file.close()
+        with open("/etc/rsyslog.d/bash.conf", "w") as f_log_file:
+            f_log_file.write(f_log_file_content)
         self.logger.printinfo("Log config removed")
 
-        f_log_rotation = open("/etc/logrotate.d/rsyslog", "r")
-        f_log_rotation_content = f_log_rotation.read()
-        f_log_rotation.close()
+        with open("/etc/logrotate.d/rsyslog", "r") as f_log_rotation:
+            f_log_rotation_content = f_log_rotation.read()
         f_log_rotation_content = f_log_rotation_content.replace(log_rotation, '')
-        f_log_rotation = open("/etc/logrotate.d/rsyslog", "w")
-        f_log_rotation.write(f_log_rotation_content)
-        f_log_rotation.close()
-
-        f_log_rotation = open("/etc/logrotate.d/syslog", "r")
-        f_log_rotation_content = f_log_rotation.read()
-        f_log_rotation.close()
+        with open("/etc/logrotate.d/rsyslog", "w") as f_log_rotation:
+            f_log_rotation.write(f_log_rotation_content)
+        with open("/etc/logrotate.d/syslog", "r") as f_log_rotation:
+            f_log_rotation_content = f_log_rotation.read()
         f_log_rotation_content = f_log_rotation_content.replace(log_rotation, '')
-        f_log_rotation = open("/etc/logrotate.d/syslog", "w")
-        f_log_rotation.write(f_log_rotation_content)
-        f_log_rotation.close()
+        with open("/etc/logrotate.d/syslog", "w") as f_log_rotation:
+            f_log_rotation.write(f_log_rotation_content)
         self.logger.printinfo("Log-rotation config removed")
 
         os.system("sudo service rsyslog restart")
@@ -232,7 +213,4 @@ class SecureTeaHistoryLogger(object):
             signal.signal(signal.SIGTERM, self.signal_handler)
             signal.pause()
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")

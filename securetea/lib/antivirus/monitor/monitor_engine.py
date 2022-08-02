@@ -170,9 +170,6 @@ class MonitorEngine(object):
             self.kill_process()
 
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
             # Kill running process
             self.kill_process()

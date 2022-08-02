@@ -42,7 +42,7 @@ class SSIDSpoof(object):
         )
 
         self.interface = interface
-        self.scan_dict = dict()
+        self.scan_dict = {}
 
     def update_list(self):
         """
@@ -58,7 +58,7 @@ class SSIDSpoof(object):
         Returns:
             None
         """
-        command = "iwlist {} scanning | egrep 'Cell | ESSID'".format(self.interface)
+        command = f"iwlist {self.interface} scanning | egrep 'Cell | ESSID'"
 
         try:
             for _ in range(5):
@@ -73,15 +73,13 @@ class SSIDSpoof(object):
             error = str(e)
             if "returned non-zero exit status 1" in error:
                 self.logger.log(
-                    "Scanning not supported by the interface: " + self.interface,
-                    logtype="warning"
+                    f"Scanning not supported by the interface: {self.interface}",
+                    logtype="warning",
                 )
+
                 self.interface = None  # Quit scanning
             else:
-                self.logger.log(
-                    "Error occurred: " + error,
-                    logtype="error"
-                )
+                self.logger.log(f"Error occurred: {error}", logtype="error")
 
     def detect_spoof(self, found):
         """
@@ -108,8 +106,8 @@ class SSIDSpoof(object):
                 previous_bssid = self.scan_dict[essid]
                 if previous_bssid != bssid:
                     self.logger.log(
-                        "Possible SSID spoofing attack detected: {}".format(essid),
-                        logtype="warning"
+                        f"Possible SSID spoofing attack detected: {essid}",
+                        logtype="warning",
                     )
 
     def start_process(self):

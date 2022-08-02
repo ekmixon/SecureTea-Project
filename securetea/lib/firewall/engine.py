@@ -65,7 +65,7 @@ class FirewallEngine(object):
 
         # Interface
         self.interface = str(self.cred['interface'])
-        if self.interface == "":
+        if not self.interface:
             self.interface = utils.get_interface()
 
         # Setup PacketFilter object
@@ -140,10 +140,7 @@ class FirewallEngine(object):
             )
 
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -168,10 +165,7 @@ class FirewallEngine(object):
             )
 
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -222,10 +216,7 @@ class FirewallEngine(object):
 
             return temp_protocol, action
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -255,10 +246,7 @@ class FirewallEngine(object):
 
             return temp_DNS, action
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -295,10 +283,7 @@ class FirewallEngine(object):
 
             return temp_sports, action
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -335,10 +320,7 @@ class FirewallEngine(object):
 
             return temp_dports, action
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -358,7 +340,7 @@ class FirewallEngine(object):
         try:
             return int(self.cred['HTTPResponse']['action'])
         except Exception as e:
-            self.logger.log('Error: ' + str(e), logtype='error')
+            self.logger.log(f'Error: {str(e)}', logtype='error')
             return 1
 
     def parse_HTTPRequest(self):
@@ -377,7 +359,7 @@ class FirewallEngine(object):
         try:
             return int(self.cred['HTTPRequest']['action'])
         except Exception as e:
-            self.logger.log('Error: ' + str(e), logtype='error')
+            self.logger.log(f'Error: {str(e)}', logtype='error')
             return 1
 
     def parse_scanLoad(self):
@@ -406,10 +388,7 @@ class FirewallEngine(object):
 
             return temp_extension, action
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error: {str(e)}", logtype="error")
             # Return empty list and block action
             return [], 0
 
@@ -440,7 +419,7 @@ class FirewallEngine(object):
             return (current_time > datetime_lb and
                 current_time < datetime_ub)
         except Exception as e:
-            self.logger.log('Error: ' + str(e), logtype='error')
+            self.logger.log(f'Error: {str(e)}', logtype='error')
 
     def process_packet(self, pkt):
         """
@@ -535,21 +514,14 @@ class FirewallEngine(object):
         Returns:
             None
         """
-        processes = []
-
         firewallProcess = multiprocessing.Process(target=self.startFirewall)
         monitorProcess = multiprocessing.Process(target=self.startMonitor)
 
         firewallProcess.start()
         monitorProcess.start()
 
-        processes.append(firewallProcess)
-        processes.append(monitorProcess)
-
-        self.logger.log(
-            "Integrations: " + str(self.integrations),
-            logtype="info"
-        )
+        processes = [firewallProcess, monitorProcess]
+        self.logger.log(f"Integrations: {str(self.integrations)}", logtype="info")
 
         for process in processes:
             process.join()

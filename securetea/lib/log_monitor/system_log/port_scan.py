@@ -67,10 +67,10 @@ class PortScan(object):
 
         # Regex to extract Received disconnect
         self.RECIEVED_DISCONNECT = r'^([a-zA-Z]+\s[0-9]+)\s([0-9]+:[0-9]+:[0-9]+).' \
-                                   r'*Received\sdisconnect\sfrom\s([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'
+                                       r'*Received\sdisconnect\sfrom\s([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'
 
         # Initialize IP to count dict
-        self.ip_dict = dict()
+        self.ip_dict = {}
 
         # Set threshold to 5 attempts per second to detect port scan
         self.THRESHOLD = 5  # inter = 0.2

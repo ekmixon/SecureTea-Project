@@ -43,8 +43,10 @@ class MLModel(object):
                 debug=debug
         )
         #initialize path of datasets
-        self.NORMAL_DATA_PATH = str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/data1.csv"
-        self.DEFACED_DATA_PATH = str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/data.csv"
+        self.NORMAL_DATA_PATH = f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/data1.csv"
+
+        self.DEFACED_DATA_PATH = f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/data.csv"
+
 
         self.prediction()
 
@@ -137,10 +139,13 @@ class MLModel(object):
     def train_test_model(self):
         df = self.DATA_FRAME
 
-        df.to_csv(str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/df.csv")
+        df.to_csv(
+            f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/df.csv"
+        )
+
         x = df.drop('Target',axis=1)
         y = df['Target']
-        
+
         x_train, x_test, y_train, y_test = train_test_split(
             x, y, test_size = 0.4, random_state = 0, stratify = y)
 
@@ -150,7 +155,7 @@ class MLModel(object):
         # Export the features
         feature_list = x_train[x_train.columns[
             constant_filter.get_support(indices=True)]]
-        
+
 
         x_train_filter = constant_filter.transform(x_train)
         x_test_filter = constant_filter.transform(x_test)
@@ -186,6 +191,7 @@ class MLModel(object):
         self.prepare_dataset()
         self.Vectorization()
         self.train_test_model()
-        filename = str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/finalized_model.sav"
+        filename = f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/finalized_model.sav"
+
         pickle.dump(self.model, open(filename, 'wb'))
         return

@@ -56,10 +56,10 @@ class ApacheParser(object):
 
         # Regex for parsing Apache log file
         self.APACHE_RGX = r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*\[([0-9]' \
-                          r'+/[a-zA-Z]+/[0-9]+:[0-9]+:[0-9]+:[0-9]+).*"GET\s(.*)"\s(\d+).*"\s"([^"]+)'
+                              r'+/[a-zA-Z]+/[0-9]+:[0-9]+:[0-9]+:[0-9]+).*"GET\s(.*)"\s(\d+).*"\s"([^"]+)'
 
         # Initialize dict for containing parsed data
-        self.apache_dict = dict()
+        self.apache_dict = {}
 
     def parse(self):
         """
@@ -80,8 +80,7 @@ class ApacheParser(object):
         self.apache_dict.clear()
         self.apache_log_data = utils.open_file(self.path)
         for line in self.apache_log_data:
-            parsed_data = re.findall(self.APACHE_RGX, line)
-            if parsed_data:
+            if parsed_data := re.findall(self.APACHE_RGX, line):
                 ip = parsed_data[0][0]
                 date = parsed_data[0][1].strip(" ")
                 day = date.split("/")[0]

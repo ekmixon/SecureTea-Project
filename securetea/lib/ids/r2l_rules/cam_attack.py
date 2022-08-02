@@ -89,9 +89,9 @@ class CAM(object):
         delta_time = int(current_time - self.start_time)
 
         try:
-            calc_threshold = int(total_cam / delta_time)
+            calc_threshold = total_cam // delta_time
         except ZeroDivisionError:
-            calc_threshold = int(total_cam)
+            calc_threshold = total_cam
 
         if calc_threshold > self._THRESHOLD:
             self.logger.log(

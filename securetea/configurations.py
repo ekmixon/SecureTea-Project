@@ -71,7 +71,7 @@ class SecureTeaConf():
             with open(path) as f:
                 return json.load(f)
         except Exception as e:
-            self.logger.log('Config file loading errored, ' + str(e), logtype='error')
+            self.logger.log(f'Config file loading errored, {str(e)}', logtype='error')
 
     def save_creds(self, data):
         """Docstring.
@@ -87,7 +87,4 @@ class SecureTeaConf():
             with open(self.confpath, 'w') as outfile:
                 json.dump(data, outfile)
         except Exception as e:
-            self.logger.log(
-                "Error in save Config " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error in save Config {str(e)}", logtype="error")

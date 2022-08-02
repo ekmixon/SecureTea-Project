@@ -277,8 +277,7 @@ def process():
     """
     try:
         pids = psutil.pids()
-        data = get_process_details(pids)
-        if data:
+        if data := get_process_details(pids):
             return jsonify(data=data), 200
 
     except Exception:
@@ -380,7 +379,7 @@ def getnetworks():
                        "isup": isup, "ipv4": ipv4, "ipv6": ipv6}
                 data.append(net)
             except Exception as e:
-                print('key' + str(e))
+                print(f'key{str(e)}')
         return jsonify(data=data), 200
     except Exception as e:
         print(e)
@@ -396,9 +395,7 @@ def checkstatus():
     if not check_auth(request):
         return "404", 404
     global processid
-    if processid:
-        return '200', 200
-    return "204", 204
+    return ('200', 200) if processid else ("204", 204)
 
 
 @app.route('/stop', methods=['POST'])
@@ -409,8 +406,7 @@ def stop():
     global processid
     try:
         if processid:
-            pid = findpid()
-            if pid:
+            if pid := findpid():
                 os.killpg(os.getpgid(pid), signal.SIGTERM)
             processid = None
         return '200', 200
@@ -422,18 +418,12 @@ def stop():
 
 def get_list(list_var):
     """Returns empty string if variable is None."""
-    if list_var:
-        return list_var
-    else:
-        return ""
+    return list_var or ""
 
 
 def get_integer(bool_var):
     """Returns string value for the bool variable."""
-    if bool_var:
-        return "1"
-    else:
-        return "0"
+    return "1" if bool_var else "0"
 
 
 @app.route('/sleep', methods=['GET', 'POST'])

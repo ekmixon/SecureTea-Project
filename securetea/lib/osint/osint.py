@@ -72,18 +72,14 @@ class OSINT(object):
             arpa_domains (str): ARPA domain list
         """
         self.logger.log(
-            "Performing reverse DNS lookup on IP: " + str(ip),
-            logtype="info"
+            f"Performing reverse DNS lookup on IP: {str(ip)}", logtype="info"
         )
+
         details = socket.gethostbyaddr(ip)
         host_name = details[0]
         arpa_domains = details[1]
 
-        if arpa_domains != []:
-            arpa_domains = ", ".join(arpa_domains)
-        else:
-            arpa_domains = "Not found"
-
+        arpa_domains = ", ".join(arpa_domains) if arpa_domains != [] else "Not found"
         return host_name, arpa_domains
 
     def geo_lookup(self, ip_addr):
@@ -100,17 +96,12 @@ class OSINT(object):
             address (str): Found address of the IP
         """
         self.logger.log(
-            "Performing geographic lookup on IP: " + str(ip_addr),
-            logtype="info"
+            f"Performing geographic lookup on IP: {str(ip_addr)}", logtype="info"
         )
+
         geocode_data = geocoder.ip(ip_addr)
         dict_data = geocode_data.json
-        address = dict_data["address"]
-
-        if not address:
-            address = "Not found"
-
-        return address
+        return dict_data["address"] or "Not found"
 
     def ip_whois(self, ip):
         """
@@ -125,13 +116,7 @@ class OSINT(object):
         Returns:
             ip_dict (dict): Dictionary of the details collected
         """
-        self.logger.log(
-            "Performing IP WHOIS lookup on IP: " + str(ip),
-            logtype="info"
-        )
-        # Initialize a temporary dict to store data
-        temp_ip_whois_dict = dict()
-
+        self.logger.log(f"Performing IP WHOIS lookup on IP: {str(ip)}", logtype="info")
         ipwho = ipwhois.IPWhois(ip)
         ip_dict = ipwho.lookup_whois()
 
@@ -141,33 +126,14 @@ class OSINT(object):
         detailed_addr = ip_dict["nets"][0]["address"]
         postal_code = ip_dict["nets"][0]["postal_code"]
 
-        if description:
-            temp_ip_whois_dict["description"] = description
-        else:
-            temp_ip_whois_dict["description"] = "Not found"
-
-        if state:
-            temp_ip_whois_dict["state"] = state
-        else:
-            temp_ip_whois_dict["state"] = "Not found"
-
-        if city:
-            temp_ip_whois_dict["city"] = city
-        else:
-            temp_ip_whois_dict["city"] = "Not found"
-
-        if detailed_addr:
-            temp_ip_whois_dict["detailed_addr"] = detailed_addr
-        else:
-            temp_ip_whois_dict["detailed_addr"] = "Not found"
-
-        if postal_code:
-            temp_ip_whois_dict["postal_code"] = postal_code
-        else:
-            temp_ip_whois_dict["postal_code"] = "Not found"
-
         # Return the generated IP WHOIS dict
-        return temp_ip_whois_dict
+        return {
+            "description": description or "Not found",
+            "state": state or "Not found",
+            "city": city or "Not found",
+            "detailed_addr": detailed_addr or "Not found",
+            "postal_code": postal_code or "Not found",
+        }
 
     def collect_details(self, ip):
         """
@@ -182,12 +148,7 @@ class OSINT(object):
         Returns:
             ip_details_dict (dict): Dictionary containing the details about the IP
         """
-        self.logger.log(
-            "Collecting details for IP: " + str(ip),
-            logtype="info"
-        )
-        ip_details_dict = dict()
-
+        self.logger.log(f"Collecting details for IP: {str(ip)}", logtype="info")
         # Perform reverse DNS lookup
         host_name, arpa_domains = self.reverse_dns_lookup(ip=ip)
         # Peform geographic lookup
@@ -195,11 +156,14 @@ class OSINT(object):
         # Perform IP WHOIS lookup
         ip_whois_dict = self.ip_whois(ip=ip)
 
-        ip_details_dict["ip"] = ip
-        ip_details_dict["host_name"] = host_name
-        ip_details_dict["arpa_domains"] = arpa_domains
-        ip_details_dict["address"] = address
-        ip_details_dict.update(ip_whois_dict)
+        ip_details_dict = {
+            "ip": ip,
+            "host_name": host_name,
+            "arpa_domains": arpa_domains,
+            "address": address,
+        }
+
+        ip_details_dict |= ip_whois_dict
 
         return ip_details_dict
 
@@ -244,10 +208,7 @@ class OSINT(object):
         Returns:
             None
         """
-        self.logger.log(
-            "Performing OSINT scan on IP: " + str(ip),
-            logtype="info"
-        )
+        self.logger.log(f"Performing OSINT scan on IP: {str(ip)}", logtype="info")
         # Collect details about the IP
         ip_details_dict = self.collect_details(ip=ip)
         # Write the details to the CSV file

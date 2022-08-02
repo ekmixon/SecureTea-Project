@@ -59,10 +59,7 @@ def complement(value):
     Returns:
         bool: 0 or 1, complement of the value passed
     """
-    if int(value) == 1:
-        return 0
-    else:
-        return 1
+    return 0 if int(value) == 1 else 1
 
 
 def xnor(func):
@@ -112,12 +109,10 @@ def xnor(func):
                     (complement(val_dict['action']) *
                      complement(val_dict['result'])))
         except Exception as e:
-            utils_logger.log(
-                "Error: " + str(e),
-                logtype="error"
-            )
+            utils_logger.log(f"Error: {str(e)}", logtype="error")
             # Return allow
             return 1
+
     return inner_wrapper
 
 
@@ -223,8 +218,7 @@ def generate_IPs(IP):
     ):
         for end in range(int(base_ip0_end),
                          int(base_ip1_end) + 1):
-            new_ip = ".".join(base_ip0_start) + '.' + str(end)
-            yield new_ip
+            yield ".".join(base_ip0_start) + '.' + str(end)
 
 
 def excecute_command(command):
@@ -314,10 +308,7 @@ def get_interface():
             intf = str(input(">> Enter the index of the interface: ")).strip(" ")
         intf = int(intf)
 
-    utils_logger.log(
-        "Selected interface is : {}".format(interfaces[intf]),
-        logtype="info"
-    )
+    utils_logger.log(f"Selected interface is : {interfaces[intf]}", logtype="info")
 
     return interfaces[intf]
 

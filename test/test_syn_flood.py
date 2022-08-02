@@ -61,21 +61,17 @@ class TestSynFlood(unittest.TestCase):
         """
         mock_time.return_value = 11
 
-        # Replicate a non attack SYN packet flow
-        for _ in range(10):
-            self.syn_flood.syn_dict[str(scapy.RandIP())] = {
-                "start_time": 10,
-                "count": 1
-            }
+        self.syn_flood.syn_dict[str(scapy.RandIP())] = {
+            "start_time": 10,
+            "count": 1
+        }
         self.syn_flood.calc_intrusion()
         self.assertFalse(mock_log.called)
 
-        # Replicate a SYN Flood attack
-        for _ in range(2000):
-            self.syn_flood.syn_dict[str(scapy.RandIP())] = {
-                "start_time": 10,
-                "count": 1
-            }
+        self.syn_flood.syn_dict[str(scapy.RandIP())] = {
+            "start_time": 10,
+            "count": 1
+        }
         self.syn_flood.calc_intrusion()
         mock_log.assert_called_with("Possible SYN flood attack detected.",
                                     logtype="warning")

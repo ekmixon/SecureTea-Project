@@ -42,7 +42,9 @@ class SigDetect(object):
 
         # Initialize path of directory to look for
         self._PATH = path
-        self._SIG_PATH =  os.path.abspath(os.path.dirname(__file__)) + '/config/signatures.txt'
+        self._SIG_PATH = (
+            f'{os.path.abspath(os.path.dirname(__file__))}/config/signatures.txt'
+        )
 
     def scan_files(self, files_list):
         """
@@ -73,6 +75,6 @@ class SigDetect(object):
             except FileNotFoundError:
                 pass
             except Exception as e:
-                self.logger.log('Error occurred: ' + str(e), logtype='error')
+                self.logger.log(f'Error occurred: {str(e)}', logtype='error')
         # Return path to hash value dictionary
         return defacement_status

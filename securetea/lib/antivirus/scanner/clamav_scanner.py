@@ -51,9 +51,10 @@ class ClamAVScanner(Scanner):
                 self._WORKERS = self.config_dict[self.os_name]["scanner"]["clamav"]["threads"]
             except KeyError:
                 self.logger.log(
-                    "Could not load configuration for: {}".format(self.os_name),
-                    logtype="error"
+                    f"Could not load configuration for: {self.os_name}",
+                    logtype="error",
                 )
+
                 sys.exit(0)
         else:
             self.logger.log(

@@ -85,8 +85,12 @@ class SecureTeaTwitter():
             None
         """
         try:
-            message = (str(msg) + " at " + common.getdatetime() +
-                       " " + common.get_current_location() + common.get_platform())
+            message = (
+                (f"{str(msg)} at {common.getdatetime()}" + " ")
+                + common.get_current_location()
+                + common.get_platform()
+            )
+
             data = {
                 "event": {
                     "type": "message_create",
@@ -113,13 +117,15 @@ class SecureTeaTwitter():
                 )
             else:
                 self.logger.log(
-                    "Notification not sent, error is: " + str(response.text),
-                    logtype="error"
+                    f"Notification not sent, error is: {str(response.text)}",
+                    logtype="error",
                 )
+
             return
         except Exception as e:
             self.logger.log(
-                "Exception in notification sent, error is: " + str(e),
-                logtype="error"
+                f"Exception in notification sent, error is: {str(e)}",
+                logtype="error",
             )
+
         return

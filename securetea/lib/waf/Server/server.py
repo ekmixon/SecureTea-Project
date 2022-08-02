@@ -62,11 +62,7 @@ class SecureteaWAF:
         )
 
         ip, port = self.server.sockets[0].getsockname()
-        self.logger.log(
-           
-            "Started WAF server on {}:{} ".format(ip,port),
-            logtype="info"
-        )
+        self.logger.log(f"Started WAF server on {ip}:{port} ", logtype="info")
 
 
         await self.server.serve_forever()

@@ -98,11 +98,11 @@ class DetectRecon(object):
 
         # Initialize empty dicts to store IPs
         self.tcp_ack = {}
-        self.icmp_scan = dict()
+        self.icmp_scan = {}
         self.udp_scan = {}
         self.fin_scan = {}
         self.xmas_scan = {}
-        self.null_scan = dict()
+        self.null_scan = {}
         self.os_scan = {}
         self.eligibility_trace = defaultdict(lambda: 1)
 
@@ -133,16 +133,13 @@ class DetectRecon(object):
                     packet_ip = str(packet[scapy.IP].src)
                 except Exception as e:
                     # If IP layer is missing
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
                 if packet_ip:
                     self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                     if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                        utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                     else:
-                        utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                     utils.excecute_command("iptables-save")
                     try:
                         # Check if the IP exists in the dict or not
@@ -160,10 +157,7 @@ class DetectRecon(object):
                             "ports": [int(packet[scapy.TCP].dport)]
                         }
                     except Exception as e:
-                        self.logger.log(
-                            "Error occurred: " + str(e),
-                            logtype="error"
-                        )
+                        self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         self.calc_intrusion(scan_dict=self.tcp_ack,
                             msg="TCP ACK / Window Scan detected")
@@ -187,16 +181,13 @@ class DetectRecon(object):
                 packet_ip = str(packet[scapy.IP].src)
             except Exception as e:
                 # If IP layer is missing
-                self.logger.log(
-                    "Error occurred: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occurred: {str(e)}", logtype="error")
             if packet_ip:
                 self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                 if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                    utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                    utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                 else:
-                    utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                    utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                 utils.excecute_command("iptables-save")
                 try:
                     # Check if the IP exists in the dict or not
@@ -214,15 +205,12 @@ class DetectRecon(object):
                         "ports": [int(packet[scapy.UDP].dport)]
                     }
                 except Exception as e:
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         self.calc_intrusion(scan_dict=self.udp_scan,
                             msg="UDP Scan detected")
 
-    def detect_icmp(self, packet=None):  # sourcery no-metrics
+    def detect_icmp(self, packet=None):    # sourcery no-metrics
         """
         Detect possible ICMP scan.
 
@@ -248,16 +236,13 @@ class DetectRecon(object):
                     packet_ip = str(packet[scapy.IP].src)
                 except Exception as e:
                     # If IP layer is missing
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
                 if packet_ip:
                     self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                     if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                        utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                     else:
-                        utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                     utils.excecute_command("iptables-save")
                     try:
                         # Check if the IP exists in the dict ot not
@@ -270,10 +255,7 @@ class DetectRecon(object):
                             "count": 1
                         }
                     except Exception as e:
-                        self.logger.log(
-                            "Error occurred: " + str(e),
-                            logtype="error"
-                        )
+                        self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         for key in self.icmp_scan.keys():
             current_time = time.time()
@@ -282,15 +264,12 @@ class DetectRecon(object):
             count = int(self.icmp_scan[key]["count"])
 
             try:
-                calc_threshold = int(count / delta_time)
+                calc_threshold = count // delta_time
             except ZeroDivisionError:
-                calc_threshold = int(count)
+                calc_threshold = count
 
             if (calc_threshold > self._THRESHOLD):
-                self.logger.log(
-                        "ICMP Scan detected from: " + str(key),
-                        logtype="warning"
-                )
+                self.logger.log(f"ICMP Scan detected from: {str(key)}", logtype="warning")
 
     def detect_os_scan(self, packet):
         """
@@ -317,16 +296,13 @@ class DetectRecon(object):
                     packet_ip = str(packet[scapy.IP].src)
                 except Exception as e:
                     # If IP layer is missing
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
                 if packet_ip:
                     self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                     if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                        utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                     else:
-                        utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                     utils.excecute_command("iptables-save")
                     try:
                         # Check if the IP exists in the dict or not
@@ -344,10 +320,7 @@ class DetectRecon(object):
                             "ports": [int(packet[scapy.TCP].dport)]
                         }
                     except Exception as e:
-                        self.logger.log(
-                            "Error occurred: " + str(e),
-                            logtype="error"
-                        )
+                        self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         self.calc_intrusion(scan_dict=self.os_scan,
                             msg="OS Fingerprinting Scan detected")
@@ -376,16 +349,13 @@ class DetectRecon(object):
                     packet_ip = str(packet[scapy.IP].src)
                 except Exception as e:
                     # If IP layer is missing
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
                 if packet_ip:
                     self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                     if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                        utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                     else:
-                        utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                     utils.excecute_command("iptables-save")
                     try:
                         # Check if the IP exists in the dict or not
@@ -403,10 +373,7 @@ class DetectRecon(object):
                             "ports": [int(packet[scapy.TCP].dport)]
                         }
                     except Exception as e:
-                        self.logger.log(
-                            "Error occurred: " + str(e),
-                            logtype="error"
-                        )
+                        self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         self.calc_intrusion(scan_dict=self.fin_scan,
                             msg="FIN Scan detected")
@@ -435,16 +402,13 @@ class DetectRecon(object):
                     packet_ip = str(packet[scapy.IP].src)
                 except Exception as e:
                     # If IP layer is missing
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
                 if packet_ip:
                     self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                     if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                        utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                     else:
-                        utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                     utils.excecute_command("iptables-save")
                     try:
                         # Check if the IP exists in the dict or not
@@ -462,10 +426,7 @@ class DetectRecon(object):
                             "ports": [int(packet[scapy.TCP].dport)]
                         }
                     except Exception as e:
-                        self.logger.log(
-                            "Error occurred: " + str(e),
-                            logtype="error"
-                        )
+                        self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         self.calc_intrusion(scan_dict=self.xmas_scan,
                             msg="XMAS Scan detected")
@@ -494,16 +455,13 @@ class DetectRecon(object):
                     packet_ip = str(packet[scapy.IP].src)
                 except Exception as e:
                     # If IP layer is missing
-                    self.logger.log(
-                        "Error occurred: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occurred: {str(e)}", logtype="error")
                 if packet_ip:
                     self.eligibility_trace[packet_ip] = (1 - self._SEVERITY_FACTOR) * self.eligibility_trace[packet_ip] + self._SEVERITY_FACTOR
                     if self.eligibility_trace[packet_ip] <= self._ELIGIBILITY_THRESHOLD:
-                        utils.excecute_command("iptables -A INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -A INPUT -s {packet_ip} -j DROP")
                     else:
-                        utils.excecute_command("iptables -D INPUT -s " + packet_ip + " -j DROP")
+                        utils.excecute_command(f"iptables -D INPUT -s {packet_ip} -j DROP")
                     utils.excecute_command("iptables-save")
                     try:
                         # Check if the IP exists in the dict or not
@@ -521,10 +479,7 @@ class DetectRecon(object):
                             "ports": [int(packet[scapy.TCP].dport)]
                         }
                     except Exception as e:
-                        self.logger.log(
-                            "Error occurred: " + str(e),
-                            logtype="error"
-                        )
+                        self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         # Check if there has been an intrusion attack
         self.calc_intrusion(scan_dict=self.null_scan,
                             msg="NULL Scan detected")
@@ -552,14 +507,14 @@ class DetectRecon(object):
             delta_time = int(current_time - start_time)
 
             try:
-                calc_threshold = int(port_len / delta_time)
+                calc_threshold = port_len // delta_time
             except ZeroDivisionError:
-                calc_threshold = int(port_len)
+                calc_threshold = port_len
 
             if (calc_threshold >= self._THRESHOLD or
                 count >= self._COUNT):
                 # Intrusion detected
-                new_msg = msg + " from IP: " + str(key)
+                new_msg = f"{msg} from IP: {str(key)}"
                 self.logger.log(
                     new_msg,
                     logtype="warning"

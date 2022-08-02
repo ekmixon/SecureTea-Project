@@ -101,10 +101,7 @@ class SystemMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("ids"):
             try:
@@ -126,10 +123,7 @@ class SystemMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         if self.cred.get("antivirus"):
             try:
@@ -152,10 +146,7 @@ class SystemMode(object):
                     logtype="error"
                 )
             except Exception as e:
-                self.logger.log(
-                    "Error occured: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         # Only debug configuratons are required for System Log Monitor, hnece create them plainly
         try:
@@ -171,10 +162,7 @@ class SystemMode(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def create_process(self):
         """
@@ -231,10 +219,7 @@ class SystemMode(object):
                 process.terminate()
 
         except Exception as e:
-            self.logger.log(
-                "Error occured: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
     def start_system_mode(self):
         """

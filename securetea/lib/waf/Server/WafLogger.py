@@ -34,8 +34,10 @@ class WafLogger (logger.SecureTeaLogger):
     def write_log(self,message):
 
         with open(self._PATH, "a") as f:
-            LEGEND = '[' + self.modulename + ']' + ' [' + \
-                     str(time.strftime("%Y-%m-%d %H:%M")) + '] '
+            LEGEND = (
+                f'[{self.modulename}] [' + str(time.strftime("%Y-%m-%d %H:%M"))
+            ) + '] '
+
             message = LEGEND + message + "\n"
             f.write(message)
             f.close()

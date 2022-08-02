@@ -28,7 +28,4 @@ def check_root():
         bool: True if running as root, else False
     """
     user = os.getuid()
-    if user == 0:
-        return True
-    else:
-        return False
+    return user == 0

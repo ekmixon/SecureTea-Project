@@ -44,8 +44,7 @@ def get_args():
         help='Degug true or false'
     )
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def get_credentials():
@@ -63,11 +62,7 @@ def get_credentials():
         final_creds (dict): Collected credentials
     """
     args = get_args()
-    if args.debug:
-        debug = True
-    else:
-        debug = False
-
+    debug = bool(args.debug)
     final_creds = {"debug": debug}
 
     # Create ArgsHelper object for collecting configurations

@@ -38,8 +38,7 @@ def json_to_dict(path):
     """
     try:
         with open(path, "r") as json_data_file:
-            data = json.load(json_data_file)
-            return data
+            return json.load(json_data_file)
     except Exception as e:
         print(e)
 
@@ -113,8 +112,7 @@ def get_md5_hash(file_path):
         hash_value (str): MD5 hash value of the file
     """
     extracted_bytes = extractBytes(file_path)
-    hash_value = hashlib.md5(extracted_bytes).hexdigest()
-    return hash_value
+    return hashlib.md5(extracted_bytes).hexdigest()
 
 
 def open_file(path):
@@ -198,7 +196,4 @@ def check_root():
         bool: True if running as root, else False
     """
     user = os.getuid()
-    if user == 0:
-        return True
-    else:
-        return False
+    return user == 0

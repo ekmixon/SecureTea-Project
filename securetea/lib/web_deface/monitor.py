@@ -115,19 +115,22 @@ class Monitor(object):
                     set1 = set(self.cache_set[path])
                     set2 = set(set_dict[path])
                     changed_content = ' '.join(list((set1-set2).union(set2-set1)))
-                    changed_content_msg = "File " + path + "Changed content includes : " + changed_content
+                    changed_content_msg = (
+                        f"File {path}Changed content includes : {changed_content}"
+                    )
+
                     self.logger.log(
                         changed_content_msg,
                         logtype="warning"
                     )
-                    msg = "Web Deface detected, attempt to modify file: " + path
+                    msg = f"Web Deface detected, attempt to modify file: {path}"
                     self.logger.log(
                         msg,
                         logtype="warning"
                     )
                     self.copy_file(path)  # hash value not equal, file modified, copy file
             else:  # hash value does not exist in cache, new file added
-                msg = "Web Deface detected, attempt to add new file: " + path
+                msg = f"Web Deface detected, attempt to add new file: {path}"
                 self.logger.log(
                     msg,
                     logtype="warning"
@@ -137,15 +140,12 @@ class Monitor(object):
                 except FileNotFoundError:
                     pass
                 except Exception as e:
-                    self.logger.log(
-                        "Error occured: " + str(e),
-                        logtype="error"
-                    )
+                    self.logger.log(f"Error occured: {str(e)}", logtype="error")
 
         # Iterate through the cache hash to look for deletion
         for path, hash_val in self.cache_hash.items():
             if not hash_dict.get(path):  # if hash not in new hash, file deleted
-                msg = "Web Deface detected, attempt to delete file: " + path
+                msg = f"Web Deface detected, attempt to delete file: {path}"
                 self.logger.log(
                     msg,
                     logtype="warning"
@@ -155,7 +155,7 @@ class Monitor(object):
         # Iterate through the file content to look for attack signature and defacement status
         for path, defacement_status in deface_status_dict.items():
             if defacement_status:
-                msg = "Web Deface detected, attack signature found on file: " + path
+                msg = f"Web Deface detected, attack signature found on file: {path}"
                 self.logger.log(
                     msg,
                     logtype="warning"
@@ -164,7 +164,8 @@ class Monitor(object):
 
         for path, defacement_status in ml_deface_prediction.items():
             if defacement_status:
-                msg = "Web Deface detected,  ML based defacement prediction model detects attack on file: " + path
+                msg = f"Web Deface detected,  ML based defacement prediction model detects attack on file: {path}"
+
                 self.logger.log(
                     msg,
                     logtype="warning"

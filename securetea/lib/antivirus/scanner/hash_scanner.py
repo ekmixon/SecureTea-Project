@@ -48,9 +48,10 @@ class HashScanner(Scanner):
                 self._HASH_STORAGE = self.config_dict[self.os_name]["update"]["hash"]["storage"]
             except KeyError:
                 self.logger.log(
-                    "Could not load configuration for: {}".format(self.os_name),
-                    logtype="error"
+                    f"Could not load configuration for: {self.os_name}",
+                    logtype="error",
                 )
+
                 sys.exit(0)
         else:
             self.logger.log(

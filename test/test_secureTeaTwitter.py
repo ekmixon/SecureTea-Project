@@ -78,5 +78,5 @@ class TestSecureTeaTwitter(unittest.TestCase):
 
         mock_requests.post.return_value = self.failure
         self.twitter_obj.notify("Random message")
-        log_msg = "Notification not sent, error is: " + str(self.failure.text)
+        log_msg = f"Notification not sent, error is: {str(self.failure.text)}"
         self.assertTrue(mock_log.log.called_with(log_msg))

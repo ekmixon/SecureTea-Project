@@ -44,7 +44,7 @@ class DDoS(object):
         self._SIMP_THRESHOLD = 100  # 100 different IPs that trigger SISP DoS
 
         # List of IPs
-        self.SISP_LIST = list()
+        self.SISP_LIST = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -81,7 +81,7 @@ class DDoS(object):
 
             if calc_count_thresh > self._SISP_THRESHOLD:  # if crosses threshold, trigger alarm
                 msg = "Possible Single IP DoS Attack Detected from: " + \
-                       str(ip) + " on: " + utils.epoch_to_date(last_time)
+                           str(ip) + " on: " + utils.epoch_to_date(last_time)
                 self.logger.log(
                     msg,
                     logtype="warning"
@@ -96,6 +96,6 @@ class DDoS(object):
             if len(self.SISP_LIST) > self._SIMP_THRESHOLD:  # if no. of SISP is huge
                 for ip in self.SISP_LIST:
                     self.logger.log(
-                        "Possible Multiple IP DoS Attack Detected from: " + str(ip),
-                        logtype="warning"
+                        f"Possible Multiple IP DoS Attack Detected from: {str(ip)}",
+                        logtype="warning",
                     )

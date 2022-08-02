@@ -74,8 +74,7 @@ class Installer(object):
             None
         """
         with open(path, "r") as json_data_file:
-            data = json.load(json_data_file)
-            return data
+            return json.load(json_data_file)
 
     @staticmethod
     def excecute_command(command):
@@ -119,21 +118,18 @@ class Installer(object):
             None
         """
         for command in self.os_config_data["commands"]:
-            self.logger.log(
-                "Executing command: " + command,
-                logtype="info"
-            )
+            self.logger.log(f"Executing command: {command}", logtype="info")
             output, error = self.excecute_command(command)
 
             if output:
-                msg = "Ouput: " + str(output)
+                msg = f"Ouput: {str(output)}"
                 self.logger.log(
                     msg,
                     logtype="info"
                 )
 
             if error:
-                msg = "Error: " + str(output)
+                msg = f"Error: {str(output)}"
                 self.logger.log(
                     msg,
                     logtype="info"

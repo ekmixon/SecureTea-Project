@@ -67,11 +67,11 @@ class SSHLogin(object):
 
         # Regex to extract invalid SSH login details
         self.INVALID_USER = r'^([a-zA-Z]+\s[0-9]+)\s([0-9]+:[0-9]+:[0-9]+).*' \
-                            r'Invalid\suser\s([a-zA-Z0-9_-]+)\sfrom\s([0-9]+\.' \
-                            r'[0-9]+\.[0-9]+\.[0-9]+)'
+                                r'Invalid\suser\s([a-zA-Z0-9_-]+)\sfrom\s([0-9]+\.' \
+                                r'[0-9]+\.[0-9]+\.[0-9]+)'
 
         # Initialize username to IP dict
-        self.username_dict = dict()
+        self.username_dict = {}
 
         # Set threshold to 5 attempts per second to detect brute-force
         self.THRESHOLD = 5  # inter = 0.2
@@ -169,16 +169,16 @@ class SSHLogin(object):
                 calc_threshold_ip = no_of_ip / delta_time
                 calc_threshold_count = count / delta_time
             except ZeroDivisionError:
-                calc_threshold_ip = int(no_of_ip)
+                calc_threshold_ip = no_of_ip
                 calc_threshold_count = int(count)
 
             if (calc_threshold_ip > self.THRESHOLD or
-                calc_threshold_count > self.THRESHOLD):
-                if no_of_ip == 1:  # if a single IP in user list
+                calc_threshold_count > self.THRESHOLD):  # if a single IP in user list
+                if no_of_ip == 1:
                     msg = "Possible SSH brute force detected for the user: " + \
-                           user.split(self.SALT)[0] + " from: " + \
-                           self.username_dict[user]["ip"][0] + " on: " + \
-                           user.split(self.SALT)[1]
+                               user.split(self.SALT)[0] + " from: " + \
+                               self.username_dict[user]["ip"][0] + " on: " + \
+                               user.split(self.SALT)[1]
                     self.logger.log(
                         msg,
                         logtype="warning"
@@ -190,8 +190,8 @@ class SSHLogin(object):
                 else:
                     for ip in self.username_dict[user]["ip"]:
                         msg = "Possible SSH brute force detected for the user: " + \
-                               user.split(self.SALT)[0] + " from: " + ip + " on: " + \
-                               user.split(self.SALT)[1]
+                                   user.split(self.SALT)[0] + " from: " + ip + " on: " + \
+                                   user.split(self.SALT)[1]
                         self.logger.log(
                             msg,
                             logtype="warning"

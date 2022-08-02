@@ -61,10 +61,11 @@ class SecureTeaWhatsapp():
         Returns:
             messsage (str): Message appended with CPU time
         """
-        message = (str(msg) + " at " + common.getdatetime() +
-                   " " + common.get_current_location() + common.get_platform())
-
-        return message
+        return (
+            (f"{str(msg)} at {common.getdatetime()}" + " ")
+            + common.get_current_location()
+            + common.get_platform()
+        )
 
     def notify(self, msg):
         """
@@ -80,16 +81,17 @@ class SecureTeaWhatsapp():
             None
         """
         try:
-            self.client.messages \
-                .create(
-                    body=self.generatemessage(msg),
-                    from_='whatsapp:' + self.whatsapp_from,
-                    to='whatsapp:' + self.whatsapp_to
-                )
+            self.client.messages.create(
+                body=self.generatemessage(msg),
+                from_=f'whatsapp:{self.whatsapp_from}',
+                to=f'whatsapp:{self.whatsapp_to}',
+            )
+
 
         except Exception as e:
             self.logger.log(
-                "Exception in notification sent, error is: " + str(e),
-                logtype="error"
+                f"Exception in notification sent, error is: {str(e)}",
+                logtype="error",
             )
+
         return

@@ -47,7 +47,7 @@ class TestPortScan(unittest.TestCase):
         # Create PortScan object
         self.port_scan_obj = PortScan()
         self.port_scan_obj.update_ip_dict('121.18.238.114', 'Jan 11', 1)
-        hashed_ip = '121.18.238.114' + self.port_scan_obj.SALT + "Jan 11"
+        hashed_ip = f'121.18.238.114{self.port_scan_obj.SALT}Jan 11'
         self.assertTrue(self.port_scan_obj.ip_dict.get(hashed_ip))
         temp_dict = {
             "count": 1,

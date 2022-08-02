@@ -86,16 +86,16 @@ class BackUp(object):
         self.check_dir(self._CACHE_DIR)  # Check whether the directory exists or not
         for file in files_list:
             file_name = self.get_file_name(file)
-            new_path = self._CACHE_DIR + "/" + file_name
+            new_path = f"{self._CACHE_DIR}/{file_name}"
             # Check if sub-dir exists or not
             self.check_dir("/".join(new_path.split("/")[:-1]))  # if not, create one
-            msg = "Generating backup, copying: " + file + " to: " + new_path
+            msg = f"Generating backup, copying: {file} to: {new_path}"
             self.logger.log(
                 msg,
                 logtype="info"
             )
             copy(file, new_path)
-            msg = "Copied: " + file + " to: " + new_path
+            msg = f"Copied: {file} to: {new_path}"
             self.logger.log(
                 msg,
                 logtype="info"

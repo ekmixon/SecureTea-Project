@@ -31,7 +31,7 @@ def get_platform():
     Raises:
         None
     """
-    return platform.system() + " " + platform.release()
+    return f"{platform.system()} {platform.release()}"
 
 
 def getdatetime():
@@ -88,7 +88,7 @@ def get_current_location():
     except Exception:
         address = "Unknown"
         ip = "127.0.0.1"
-    return "Location: " + address + " (IP: " + ip + " )"
+    return f"Location: {address} (IP: {ip} )"
 
 
 def write_mal_ip(ip):

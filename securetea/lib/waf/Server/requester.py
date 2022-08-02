@@ -58,23 +58,19 @@ class Requester:
 
         if self.host in redirect_table.keys():
             host,port=redirect_table[host].split(":")
-            try :
+            try:
                 {
                     self.socket.connect((host,int(port)))
                  }
             except Exception as e:
-                       self.logger.log(
-                           "Error:{}".format(e),
-                           logtype="error"
-                                       )
+                self.logger.log(f"Error:{e}", logtype="error")
         else:
 
             self.logger.log(
-                "Routing table not configured for Incoming HOST:{}".format(self.host),
-                logtype="error"
-
-
+                f"Routing table not configured for Incoming HOST:{self.host}",
+                logtype="error",
             )
+
             self.transport.close();
 
     def handle_CONNECT(self,domain):
@@ -104,12 +100,11 @@ class Requester:
 
         while True:
             try:
-                buf = self.socket.recv(8888888)
-                if not buf:
-                    break
-                else:
+                if buf := self.socket.recv(8888888):
                     response += buf
 
+                else:
+                    break
             except Exception as e:
                 break
 

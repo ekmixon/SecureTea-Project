@@ -80,14 +80,13 @@ class DetSniffer(object):
         log_file_data = utils.open_file(self.log_file)
         for line in log_file_data:
             found = re.findall(self.SNIFFER, line)
-            if found != []:
-                if found[0].strip(" ") not in self.found_promisc:
-                    self.found_promisc.append(found[0].strip(" "))
-                    msg = "Possible malicious sniffer detected " + found[0].strip(" ")
-                    self.logger.log(
-                        msg,
-                        logtype="warning"
-                    )
+            if found != [] and found[0].strip(" ") not in self.found_promisc:
+                self.found_promisc.append(found[0].strip(" "))
+                msg = "Possible malicious sniffer detected " + found[0].strip(" ")
+                self.logger.log(
+                    msg,
+                    logtype="warning"
+                )
 
     def run(self):
         """

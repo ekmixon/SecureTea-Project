@@ -43,7 +43,7 @@ class FuzzerDetect(object):
         self._THRESHOLD = 25  # inter = 0.04
 
         # List of IPs
-        self.logged_IP = list()
+        self.logged_IP = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -103,8 +103,10 @@ class FuzzerDetect(object):
                 calc_get_thresh > self._THRESHOLD):
                 if ip not in self.logged_IP:
                     self.logged_IP.append(ip)
-                    msg = "Possible URL fuzzing detected from: " + str(ip) + \
-                          " on: " + utils.epoch_to_date(data[ip]["ep_time"][0])
+                    msg = (
+                        f"Possible URL fuzzing detected from: {str(ip)}" + " on: "
+                    ) + utils.epoch_to_date(data[ip]["ep_time"][0])
+
                     self.logger.log(
                         msg,
                         logtype="warning"

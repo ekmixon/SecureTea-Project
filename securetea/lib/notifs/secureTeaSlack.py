@@ -47,7 +47,7 @@ class SecureTeaSlack():
         self.user_id = cred['user_id']
         self.slack_channel_open_url = 'https://slack.com/api/im.open'
         self.slack_post_message_url = 'https://slack.com/api/chat.postMessage'
-        self.auth_header = 'Bearer ' + self.slack_token
+        self.auth_header = f'Bearer {self.slack_token}'
 
     def notify(self, msg):
         """
@@ -62,8 +62,12 @@ class SecureTeaSlack():
         Returns:
             None
         """
-        message = (str(msg) + " at " + common.getdatetime() +
-                   " " + common.get_current_location() + common.get_platform())
+        message = (
+            (f"{str(msg)} at {common.getdatetime()}" + " ")
+            + common.get_current_location()
+            + common.get_platform()
+        )
+
 
         channel_info = requests.post(
             self.slack_channel_open_url,

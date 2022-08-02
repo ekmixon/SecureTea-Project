@@ -88,13 +88,15 @@ class HarmfulCommands(object):
             if (found is not None and found != []):
                 command = found[0]
                 command = command.strip(" ")
-                if self.check_command(command):  # if command is harmful
-                    if command not in self.found_harmful:
-                        self.found_harmful.append(command)
-                        self.logger.log(
-                            "Possible harmful command found: {}".format(command),
-                            logtype="warning"
-                        )
+                if (
+                    self.check_command(command)
+                    and command not in self.found_harmful
+                ):
+                    self.found_harmful.append(command)
+                    self.logger.log(
+                        f"Possible harmful command found: {command}",
+                        logtype="warning",
+                    )
 
     def check_command(self, command):
         """

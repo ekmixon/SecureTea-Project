@@ -56,7 +56,7 @@ def write_ip(data):
     """
     lock.acquire()  # Acquire thead lock
     with open("bad_ip.txt", "a+") as f:
-        for ip in f.readlines():
+        for ip in f:
             if data in ip.strip("\n"):
                 lock.release()  # Release lock
                 return
@@ -96,10 +96,7 @@ def check_root():
         bool: True if running as root, else False
     """
     user = os.getuid()
-    if user == 0:
-        return True
-    else:
-        return False
+    return user == 0
 
 
 def get_epoch_time(month, day, year, last_time):
@@ -218,9 +215,7 @@ def get_list(data):
     Returns:
         TYPE: list
     """
-    obtained_list = [ele.strip(" ").strip("\n") \
-                     for ele in data.split(",")]
-    return obtained_list
+    return [ele.strip(" ").strip("\n") for ele in data.split(",")]
 
 
 def resolver(url):
@@ -240,11 +235,9 @@ def resolver(url):
         domain=url.strip("https://").strip("http://")
 
         try:
-            ip=socket.gethostbyname(domain)
-            return ip
+            return socket.gethostbyname(domain)
         except Exception as e:
-            ip=None
-            return ip
+            return None
 
 
 

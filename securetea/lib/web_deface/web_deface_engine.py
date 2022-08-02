@@ -55,7 +55,7 @@ class Engine(object):
         if ((path is None and server_name is None) or
             (path == "" and server_name == "")):
             msg = "Please specify either the path of web server files " + \
-                  "or the name of the web server, exiting."
+                      "or the name of the web server, exiting."
             self.logger.log(
                 msg,
                 logtype="error"
@@ -96,7 +96,7 @@ class Engine(object):
             )
             sys.exit(0)
         except Exception as e:
-            self.logger.log('Error occurred: ' + str(e), logtype='error')
+            self.logger.log(f'Error occurred: {str(e)}', logtype='error')
         if self._PATH:  # if directory path is valid
             # Gather files (create a list of files in the directory)
             self.gather_file_obj = gather_file.GatherFile(debug=self.debug, path=self._PATH)
@@ -118,7 +118,7 @@ class Engine(object):
         Returns:
             None
         """
-        msg = "SecureTea Web Deface Detection started, monitoring files: " + self._PATH
+        msg = f"SecureTea Web Deface Detection started, monitoring files: {self._PATH}"
         self.logger.log(
             msg,
             logtype="info"
@@ -140,7 +140,9 @@ class Engine(object):
         dump_dict_to_json(path=self._SET_MAP, py_dict=set_dict)
 
         #Defacment Prediction Model
-        if(not os.path.isfile(str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/finalized_model.sav")):
+        if not os.path.isfile(
+            f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/finalized_model.sav"
+        ):
             self.model = model.MLModel(debug=self.debug)
 
         # Create monitor object

@@ -68,9 +68,10 @@ class UpdateYara(object):
                 self._YARA_STORAGE = self.config_dict[self.os_name]["update"]["yara"]["storage"]
             except KeyError:
                 self.logger.log(
-                    "Could not load configuration for: {}".format(self.os_name),
-                    logtype="error"
+                    f"Could not load configuration for: {self.os_name}",
+                    logtype="error",
                 )
+
                 sys.exit(0)
         else:
             self.logger.log(
@@ -126,8 +127,7 @@ class UpdateYara(object):
         Returns:
             downloaded (list): List of downloaded (updated) Yara rules
         """
-        downloaded = os.listdir(self._YARA_STORAGE)
-        return downloaded
+        return os.listdir(self._YARA_STORAGE)
 
     def update(self):
         """
@@ -148,10 +148,7 @@ class UpdateYara(object):
             if name not in self.downloaded:
                 self.flag = 1  # Download in process
                 print("\n[!] Downloading: ", name)
-                self.logger.log(
-                    "Downloading: {}".format(name),
-                    logtype="info"
-                )
+                self.logger.log(f"Downloading: {name}", logtype="info")
                 dwn_url = self._YARA_DW_URL + name
                 wget.download(dwn_url, out=self._YARA_STORAGE)
 

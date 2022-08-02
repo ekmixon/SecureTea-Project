@@ -58,7 +58,7 @@ class CrossSite(object):
         self.regex = utils.open_file(self.REGEX_FILE)
 
         # Logged IP list
-        self.logged_IP = list()
+        self.logged_IP = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -86,20 +86,24 @@ class CrossSite(object):
         for ip in data.keys():
             get_req = data[ip]["get"]
             last_time = data[ip]["ep_time"][0]
-            if (self.payload_match(get_req) or self.regex_check(get_req)):
-                if ip not in self.logged_IP:  # if not logged earlier
-                    self.logged_IP.append(ip)
-                    msg = "Possible Cross Site Scripting (XSS) detected from: " + str(ip) + \
-                          " on: " + str(utils.epoch_to_date(last_time))
-                    self.logger.log(
-                        msg,
-                        logtype="warning"
-                    )
-                    utils.write_ip(str(ip))
-                    # Generate CSV report using OSINT tools
-                    self.osint_obj.perform_osint_scan(ip.strip(" "))
-                    # Write malicious IP to file, to teach Firewall about the IP
-                    write_mal_ip(ip.strip(" "))
+            if (
+                (self.payload_match(get_req) or self.regex_check(get_req))
+            ) and ip not in self.logged_IP:
+                self.logged_IP.append(ip)
+                msg = (
+                    f"Possible Cross Site Scripting (XSS) detected from: {str(ip)}"
+                    + " on: "
+                ) + str(utils.epoch_to_date(last_time))
+
+                self.logger.log(
+                    msg,
+                    logtype="warning"
+                )
+                utils.write_ip(str(ip))
+                # Generate CSV report using OSINT tools
+                self.osint_obj.perform_osint_scan(ip.strip(" "))
+                # Write malicious IP to file, to teach Firewall about the IP
+                write_mal_ip(ip.strip(" "))
 
     def payload_match(self, get_req):
         """

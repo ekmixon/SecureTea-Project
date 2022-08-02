@@ -61,10 +61,11 @@ class SecureTeaTwilio():
         Returns:
             messsage (str): Message appended with CPU time
         """
-        message = (str(msg) + " at " + common.getdatetime() +
-                   " " + common.get_current_location() + common.get_platform())
-
-        return message
+        return (
+            (f"{str(msg)} at {common.getdatetime()}" + " ")
+            + common.get_current_location()
+            + common.get_platform()
+        )
 
     def notify(self, msg):
         """
@@ -81,7 +82,7 @@ class SecureTeaTwilio():
         """
         try:
             self.client.messages \
-                .create(
+                    .create(
                     body=self.generatemessage(msg),
                     from_=self.twilio_from,
                     to=self.twilio_to
@@ -89,7 +90,8 @@ class SecureTeaTwilio():
 
         except Exception as e:
             self.logger.log(
-                "Exception in notification sent, error is: " + str(e),
-                logtype="error"
+                f"Exception in notification sent, error is: {str(e)}",
+                logtype="error",
             )
+
         return

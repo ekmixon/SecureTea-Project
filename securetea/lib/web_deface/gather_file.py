@@ -61,13 +61,9 @@ class GatherFile(object):
         try:
             # Iterate through the directory
             for root, _, files in os.walk(self._PATH):
-                for file in files:
-                    found_files.append(os.path.join(root, file))
+                found_files.extend(os.path.join(root, file) for file in files)
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
         # Return the list of found files
         return found_files

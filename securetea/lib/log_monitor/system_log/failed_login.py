@@ -73,7 +73,7 @@ class FailedLogin(object):
         self.MESSAGE_REPEAT = r'message repeated\s([0-9]+)'
 
         # Initialize user to login attempt count dict
-        self.user_to_count = dict()
+        self.user_to_count = {}
 
         # Set threshold to 5 attempts per second to detect brute-force
         self.THRESHOLD = 5  # inter = 0.2
@@ -100,17 +100,14 @@ class FailedLogin(object):
                 username = re.findall(self.USERNAME, found[0])[0][1]
                 data_in_list = found[0].split(" ")
 
+                month = data_in_list[0]
                 if data_in_list[1] != "":  # if double digit day
-                    month = data_in_list[0]
                     day = data_in_list[1]
                     last_time = data_in_list[2]
-                    date = month + " " + day
                 else:  # if single digit day
-                    month = data_in_list[0]
                     day = data_in_list[2]
                     last_time = data_in_list[3]
-                    date = month + " " + day
-
+                date = f"{month} {day}"
                 # convert date, time to epoch time
                 epoch_time = utils.get_epoch_time(month, day, last_time)
 
@@ -184,8 +181,11 @@ class FailedLogin(object):
             if calc_threshold > self.THRESHOLD:  # Brute-force detected
                 user = username.split(self.SALT)[0]
                 day = username.split(self.SALT)[1]
-                msg = "Too much failed login attempts: " + user + " on: " + \
-                       day + " failed attempts: " + str(count)
+                msg = (
+                    (f"Too much failed login attempts: {user} on: " + day)
+                    + " failed attempts: "
+                ) + str(count)
+
                 self.logger.log(
                     msg,
                     logtype="warning"

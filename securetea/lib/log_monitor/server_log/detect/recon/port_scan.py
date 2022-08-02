@@ -50,7 +50,7 @@ class PortScan(object):
         self.payloads = utils.open_file(self.PAYLOAD_FILE)
 
         # List of IPs
-        self.logged_IP = list()
+        self.logged_IP = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -72,21 +72,22 @@ class PortScan(object):
         """
         for ip in data.keys():
             user_agent = data[ip]["ua"]
-            if (self.payload_match(user_agent)):
-                if ip not in self.logged_IP:
-                    self.logged_IP.append(ip)
-                    last_time = data[ip]["ep_time"][0]
-                    msg = "Possible port scan detected from: " + str(ip) + \
-                          " on: " + utils.epoch_to_date(last_time)
-                    self.logger.log(
-                        msg,
-                        logtype="warning"
-                    )
-                    utils.write_ip(str(ip))
-                    # Generate CSV report using OSINT tools
-                    self.osint_obj.perform_osint_scan(ip.strip(" "))
-                    # Write malicious IP to file, to teach Firewall about the IP
-                    write_mal_ip(ip.strip(" "))
+            if (self.payload_match(user_agent)) and ip not in self.logged_IP:
+                self.logged_IP.append(ip)
+                last_time = data[ip]["ep_time"][0]
+                msg = (
+                    f"Possible port scan detected from: {str(ip)}" + " on: "
+                ) + utils.epoch_to_date(last_time)
+
+                self.logger.log(
+                    msg,
+                    logtype="warning"
+                )
+                utils.write_ip(str(ip))
+                # Generate CSV report using OSINT tools
+                self.osint_obj.perform_osint_scan(ip.strip(" "))
+                # Write malicious IP to file, to teach Firewall about the IP
+                write_mal_ip(ip.strip(" "))
 
     def payload_match(self, user_agent):
         """

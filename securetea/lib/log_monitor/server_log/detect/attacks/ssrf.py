@@ -65,7 +65,7 @@ class Ssrf (object):
         self.ips = utils.open_file(self.IP_FILE)
 
         # Logged IP list
-        self.logged_IP = list()
+        self.logged_IP = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -88,34 +88,37 @@ class Ssrf (object):
             # extracting all the urls in path
             urls=re.findall(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+", get_req[0])
             for url in urls:
-                resolved_ip=utils.resolver(url)
-                if resolved_ip:
-                    if (self.rmatch(resolved_ip)):
-                        if ip not in self.logged_IP:  # if not logged earlier
-                            self.logged_IP.append(ip)
-                            msg = "Possible SSRF detected From: " + str(ip) + \
-                                  " on: " + str(utils.epoch_to_date(last_time))
-                            self.logger.log(
-                                msg,
-                                logtype="warning"
-                            )
-                            utils.write_ip(str(ip))
-                            # Generate CSV report using OSINT tools
-                            self.osint_obj.perform_osint_scan(ip.strip(" "))
-                            # Write malicious IP to file, to teach Firewall about the IP
-                            write_mal_ip(ip.strip(" "))
+                if resolved_ip := utils.resolver(url):
+                    if (self.rmatch(resolved_ip)) and ip not in self.logged_IP:
+                        self.logged_IP.append(ip)
+                        msg = (
+                            f"Possible SSRF detected From: {str(ip)}" + " on: "
+                        ) + str(utils.epoch_to_date(last_time))
 
-                if(self.payload_match(url) or self.regex_match(get_req)):
-                        if ip not in self.logged_IP:
-                            self.logged_IP.append(ip)
-                            msg = "Possible SSRF detected From  " + str(ip) + \
-                                  " on: " + str(utils.epoch_to_date(last_time))
-                            self.logger.log(msg,logtype="warning")
-                            utils.write_ip(str(ip))
-                            # Generate CSV report using OSINT tools
-                            self.osint_obj.perform_osint_scan(ip.strip(" "))
-                            # Write malicious IP to file, to teach Firewall about the IP
-                            write_mal_ip(ip.strip(" "))
+                        self.logger.log(
+                            msg,
+                            logtype="warning"
+                        )
+                        utils.write_ip(str(ip))
+                        # Generate CSV report using OSINT tools
+                        self.osint_obj.perform_osint_scan(ip.strip(" "))
+                        # Write malicious IP to file, to teach Firewall about the IP
+                        write_mal_ip(ip.strip(" "))
+
+                if (
+                    (self.payload_match(url) or self.regex_match(get_req))
+                ) and ip not in self.logged_IP:
+                    self.logged_IP.append(ip)
+                    msg = (
+                        f"Possible SSRF detected From  {str(ip)}" + " on: "
+                    ) + str(utils.epoch_to_date(last_time))
+
+                    self.logger.log(msg,logtype="warning")
+                    utils.write_ip(str(ip))
+                    # Generate CSV report using OSINT tools
+                    self.osint_obj.perform_osint_scan(ip.strip(" "))
+                    # Write malicious IP to file, to teach Firewall about the IP
+                    write_mal_ip(ip.strip(" "))
 
 
     def payload_match(self,url):

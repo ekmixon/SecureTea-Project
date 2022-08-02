@@ -59,9 +59,10 @@ class YaraScanner(Scanner):
                 self._YARA_STORAGE = self.config_dict[self.os_name]["update"]["yara"]["storage"]
             except KeyError:
                 self.logger.log(
-                    "Could not load configuration for: {}".format(self.os_name),
-                    logtype="error"
+                    f"Could not load configuration for: {self.os_name}",
+                    logtype="error",
                 )
+
                 sys.exit(0)
         else:
             self.logger.log(
@@ -83,20 +84,20 @@ class YaraScanner(Scanner):
         Returns:
             None
         """
-        if yara_status:
-            yara_files_list = os.listdir(self._YARA_STORAGE)
-            for yara_file in yara_files_list:
-                if yara_file.endswith(".yar") or yara_file.endswith(".yara"):
-                    yara_file_path = os.path.join(self._YARA_STORAGE, yara_file)
-                    rule_compile = yara.compile(yara_file_path)
-                    matches = rule_compile.match(file_path)
-                    if matches:
-                        self.logger.log(
-                            "Possible malicious file detected: {0}".format(file_path),
-                            logtype="warning"
-                        )
-                        if file_path not in self.malicious_file_list:
-                            self.malicious_file_list.append(file_path)
-                            super().check_virus_total(file_path)
-                            return
+        if not yara_status:
+            return
+        yara_files_list = os.listdir(self._YARA_STORAGE)
+        for yara_file in yara_files_list:
+            if yara_file.endswith(".yar") or yara_file.endswith(".yara"):
+                yara_file_path = os.path.join(self._YARA_STORAGE, yara_file)
+                rule_compile = yara.compile(yara_file_path)
+                if matches := rule_compile.match(file_path):
+                    self.logger.log(
+                        "Possible malicious file detected: {0}".format(file_path),
+                        logtype="warning"
+                    )
+                    if file_path not in self.malicious_file_list:
+                        self.malicious_file_list.append(file_path)
+                        super().check_virus_total(file_path)
                         return
+                    return

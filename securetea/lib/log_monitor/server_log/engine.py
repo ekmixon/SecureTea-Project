@@ -90,23 +90,21 @@ class Engine(object):
 
         if log_file:
             self.log_file_path = str(log_file)
-        else:
-            os_name = utils.categorize_os()
-            if os_name:
-                try:
-                    self.log_file_path = self.system_log_file_map[log_type][os_name]
-                except KeyError:
-                    self.logger.log(
-                        "Could not find a suitable log file path, exiting.",
-                        logtype="error"
-                    )
-                    sys.exit(0)
-            else:
+        elif os_name := utils.categorize_os():
+            try:
+                self.log_file_path = self.system_log_file_map[log_type][os_name]
+            except KeyError:
                 self.logger.log(
-                    "OS not recognized, log file path not selected, exiting.",
+                    "Could not find a suitable log file path, exiting.",
                     logtype="error"
                 )
                 sys.exit(0)
+        else:
+            self.logger.log(
+                "OS not recognized, log file path not selected, exiting.",
+                logtype="error"
+            )
+            sys.exit(0)
 
         # Create specific parser objects
         if self.log_file_path:  # if log file path is valid
@@ -175,17 +173,20 @@ class Engine(object):
             ddos_thread = threading.Thread(target=self.ddos_obj.detect_ddos, args=(data,))
             user_filter_thread = threading.Thread(target=self.user_filter_obj.filter_user_criteria, args=(data,))
 
-            # Add created threads to the thread pool
-            thread_pool.append(xss_thread)
-            thread_pool.append(sqli_thread)
-            thread_pool.append(lfi_thread)
-            thread_pool.append(web_shell_thread)
-            thread_pool.append(ssrf_thread)
-            thread_pool.append(port_scan_thread)
-            thread_pool.append(fuzzer_thread)
-            thread_pool.append(spider_thread)
-            thread_pool.append(ddos_thread)
-            thread_pool.append(user_filter_thread)
+            thread_pool.extend(
+                (
+                    xss_thread,
+                    sqli_thread,
+                    lfi_thread,
+                    web_shell_thread,
+                    ssrf_thread,
+                    port_scan_thread,
+                    fuzzer_thread,
+                    spider_thread,
+                    ddos_thread,
+                    user_filter_thread,
+                )
+            )
 
             # Start the thread process
             xss_thread.start()

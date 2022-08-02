@@ -82,9 +82,7 @@ class SecureTeaGmail(object):
             self.server.login(self.sender_email,
                               self._PASSWORD)
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e),
-            )
+            self.logger.log(f"Error: {str(e)}")
 
     def generate_message(self, msg):
         """
@@ -99,14 +97,21 @@ class SecureTeaGmail(object):
         Returns:
             body (str): Generated message
         """
-        body = '\r\n'.join(['To: %s' % self.to_email,
-                            'From: %s' % self.sender_email,
-                            'Subject: (Alert) Intrusion Detected!' + " at " +
-                            common.getdatetime() +
-                            " " + common.get_current_location() + " " +
-                            common.get_platform(),
-                            '', msg])
-        return body
+        return '\r\n'.join(
+            [
+                f'To: {self.to_email}',
+                f'From: {self.sender_email}',
+                'Subject: (Alert) Intrusion Detected!'
+                + " at "
+                + common.getdatetime()
+                + " "
+                + common.get_current_location()
+                + " "
+                + common.get_platform(),
+                '',
+                msg,
+            ]
+        )
 
     def notify(self, msg):
         """
@@ -131,9 +136,7 @@ class SecureTeaGmail(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error: " + str(e)
-            )
+            self.logger.log(f"Error: {str(e)}")
 
     def __del__(self):
         """

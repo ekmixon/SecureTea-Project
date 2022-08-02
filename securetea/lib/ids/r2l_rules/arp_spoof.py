@@ -116,7 +116,4 @@ class ARPCache(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="warning"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="warning")

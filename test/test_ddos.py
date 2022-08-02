@@ -32,7 +32,7 @@ class TestDDoS(unittest.TestCase):
         # Case 1: Classify as SISP
         mock_time.return_value = 10
         pkt = scapy.IP(src="192.168.0.1") \
-              / scapy.TCP(dport=80)
+                  / scapy.TCP(dport=80)
         self.ddos.classify_ddos(pkt)
         l = len(self.ddos.sisp)
         self.assertEqual(l, 1)
@@ -50,7 +50,7 @@ class TestDDoS(unittest.TestCase):
 
         # Case2: Classify as SIMP
         pkt = scapy.IP(src="192.168.0.1") \
-              / scapy.TCP(dport=90)
+                  / scapy.TCP(dport=90)
         self.ddos.classify_ddos(pkt)
         # IP entry should get deleted from SISP dict
         l = len(self.ddos.sisp)

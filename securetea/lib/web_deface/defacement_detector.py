@@ -50,7 +50,7 @@ class DefaceDetect(object):
 
         # Initialize path of directory to look for
         self._PATH = path
-        self._DATASET = str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/dataset.csv"
+        self._DATASET = f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/dataset.csv"
 
     def ml_based_scan(self, files_list):
         """
@@ -59,7 +59,8 @@ class DefaceDetect(object):
         Args:
             file_list (dict): list of files in the directory to scan
         """
-        filename = str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/finalized_model.sav"
+        filename = f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/finalized_model.sav"
+
         with open(filename, "rb") as f:
             loaded_model = pickle.load(f)
 
@@ -85,7 +86,7 @@ class DefaceDetect(object):
                         logtype="info"
                     )
                     return {}
-                
+
         df = pd.read_csv(
             self._DATASET,
             usecols = fields, nrows=5000
@@ -108,7 +109,11 @@ class DefaceDetect(object):
             features.todense(),
             columns=tfidf.get_feature_names()
         )
-        df_model = pd.read_csv(str(Path(os.path.dirname(__file__)).parent) + "/web_deface/config/df.csv", index_col=0)
+        df_model = pd.read_csv(
+            f"{str(Path(os.path.dirname(__file__)).parent)}/web_deface/config/df.csv",
+            index_col=0,
+        )
+
         df = df.reindex(labels=df_model.columns,axis=1)
         df['Target'] = '1'
         df = df.fillna(0)

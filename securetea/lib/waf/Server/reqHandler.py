@@ -123,7 +123,6 @@ class HTTP(asyncio.Protocol):
 
                 self.features.extract_path()
                 self.features.extract_headers()
-
                #Live feature count that has to be comapred with the model
 
                 self.feature_value=self.features.get_count()
@@ -139,7 +138,7 @@ class HTTP(asyncio.Protocol):
                 if self.mode==0 and predicted_value[0]==1:
 
                     # Log the file and send the Request
-                    message="Attack Detected from :{} Payload:{}".format(headers["X-Real-IP"],path)
+                    message = f'Attack Detected from :{headers["X-Real-IP"]} Payload:{path}'
                     self.logger.log(
                         message,
                         logtype="warning"
@@ -151,7 +150,7 @@ class HTTP(asyncio.Protocol):
                 if self.mode==1 and predicted_value[0]==1:
 
                     # Reset the Request
-                    message="Attack Detected ! Request Blocked from :{}".format(headers["X-Real-IP"])
+                    message = f'Attack Detected ! Request Blocked from :{headers["X-Real-IP"]}'
                     self.logger.log(
                         message,
                         logtype="warning"
@@ -163,7 +162,7 @@ class HTTP(asyncio.Protocol):
                 if self.mode==1 and predicted_value[0]==0:
 
                     # Send the request
-                    message="Incoming {} request {} from :{}".format(method, path, headers["X-Real-IP"])
+                    message = f'Incoming {method} request {path} from :{headers["X-Real-IP"]}'
                     self.logger.log(
                         message,
                         logtype="info"
@@ -176,7 +175,8 @@ class HTTP(asyncio.Protocol):
                 if self.mode==0 and predicted_value[0]==0:
 
                     # Send the request
-                    message="Incoming {} request {} from :{}:{}".format(method,path,headers["X-Real-IP"], self.rport)
+                    message = f'Incoming {method} request {path} from :{headers["X-Real-IP"]}:{self.rport}'
+
                     self.logger.log(
                         message,
                         logtype="info"

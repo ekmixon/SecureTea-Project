@@ -57,11 +57,7 @@ class IoTChecker(object):
             # Initialize Shodan object
             self.shodan_obj = shodan.Shodan(self._API_KEY)
 
-        if ip and ip != "":
-            self.ip = ip
-        else:
-            # Collect public IP
-            self.ip = self.get_public_ip()
+        self.ip = ip if ip and ip != "" else self.get_public_ip()
 
     def get_public_ip(self):
         """
@@ -99,8 +95,7 @@ class IoTChecker(object):
                 logtype="info"
             )
             try:
-                results = self.shodan_obj.host(self.ip)
-                if results:
+                if results := self.shodan_obj.host(self.ip):
                     self.logger.log(
                         "IP: {0} under Shodan range (risk)".format(self.ip),
                         logtype="warning"

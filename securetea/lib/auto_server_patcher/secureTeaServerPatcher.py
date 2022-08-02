@@ -56,27 +56,14 @@ class SecureTeaAutoServerPatcher(object):
             sys.exit(0)
 
         # List of files to patch
-        self.to_patch = list()
+        self.to_patch = []
 
         # Parse arguments
         url = cred['url']
-        if cred['apache']:
-            apache = 1
-        else:
-            apache = 0
-        if cred['ssh']:
-            ssh = 1
-        else:
-            ssh = 0
-        if cred['login']:
-            login = 1
-        else:
-            login = 0
-        if cred['sysctl']:
-            sysctl = 1
-        else:
-            sysctl = 0
-
+        apache = 1 if cred['apache'] else 0
+        ssh = 1 if cred['ssh'] else 0
+        login = 1 if cred['login'] else 0
+        sysctl = 1 if cred['sysctl'] else 0
         # Determine which file to patch
         if apache == 1:
             self.to_patch.append("apache")
@@ -87,11 +74,7 @@ class SecureTeaAutoServerPatcher(object):
         if sysctl == 1:
             self.to_patch.append("sysctl")
 
-        if url and url != "XXXX":  # if valid URL
-            self.url = url
-        else:
-            self.url = None
-
+        self.url = url if url and url != "XXXX" else None
         # Create Installer object
         self.installer = Installer(debug=debug)
         # Create Patcher object

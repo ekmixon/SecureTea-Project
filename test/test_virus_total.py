@@ -49,8 +49,8 @@ class TestVirusTotal(unittest.TestCase):
         response_obj.status_code = 203
         vt_obj.check_hash(hash_value="hash_value", file_path="file_path")
         mck_log.assert_called_with('Request rate limit exceeded. You are making more requests than allowed. '\
-                                   'You have exceeded one of your quotas (minute, daily or monthly). '\
-                                   'Daily quotas are reset every day at 00:00 UTC.',
+                                       'You have exceeded one of your quotas (minute, daily or monthly). '\
+                                       'Daily quotas are reset every day at 00:00 UTC.',
                                     logtype='error')
         # Case 3:
         response_obj.status_code = 400

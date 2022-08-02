@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
             if os_name == 'Ubuntu' and int(os_major_version) >= 16:
                 command = 'systemctl suspend'
-    
+
             os.system(command)
         if platfom == 'Darwin':
             os.system('pmset sleepnow')

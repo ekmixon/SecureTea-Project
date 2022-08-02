@@ -80,11 +80,7 @@ class CoreEngine(object):
         self.monitor_usb = int(monitor_usb)
         self.auto_delete = int(auto_delete)
 
-        if custom_scan:
-            path = custom_scan
-        else:
-            path = "~/"
-
+        path = custom_scan or "~/"
         # Create GatherFile object
         self.gather_file_obj = GatherFile(path=path)
         # Get list of files
@@ -92,11 +88,7 @@ class CoreEngine(object):
         # Initialize list of process
         self.process_pool = []
 
-        if vt_api_key and vt_api_key != "XXXX":
-            self.vt_api_key = vt_api_key
-        else:
-            self.vt_api_key = None
-
+        self.vt_api_key = vt_api_key if vt_api_key and vt_api_key != "XXXX" else None
         self.use_clamav = use_clamav
         self.use_yara = use_yara
 
@@ -132,46 +124,41 @@ class CoreEngine(object):
             None
         """
         # If update is specified
-        if self.update:
-            print("[!] Press CTRL+C to skip updates")
+        if not self.update:
+            return
+        print("[!] Press CTRL+C to skip updates")
             # Update Hash
-            try:
-                # Create UpdateHash object
-                self.update_hash_obj = UpdateHash(debug=self.debug,
-                                                  config_path=self._CONFIG_PATH)
-                # Start / resume update
-                self.update_hash_obj.update()
-            except KeyboardInterrupt:
-                self.logger.log(
-                    "Skipping Hash update",
-                    logtype="info"
-                )
-                print("[!] Skipping Hash update")
-                self.update_hash_obj.remove_temp()
-            except Exception as e:
-                self.logger.log(
-                    "Error occurred: " + str(e),
-                    logtype="error"
-                )
+        try:
+            # Create UpdateHash object
+            self.update_hash_obj = UpdateHash(debug=self.debug,
+                                              config_path=self._CONFIG_PATH)
+            # Start / resume update
+            self.update_hash_obj.update()
+        except KeyboardInterrupt:
+            self.logger.log(
+                "Skipping Hash update",
+                logtype="info"
+            )
+            print("[!] Skipping Hash update")
+            self.update_hash_obj.remove_temp()
+        except Exception as e:
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
             # Update Yara
-            try:
-                # Create UpdateYara object
-                self.yara_obj = UpdateYara(debug=self.debug,
-                                           config_path=self._CONFIG_PATH)
-                # Start / resume object
-                self.yara_obj.update()
-            except KeyboardInterrupt:
-                self.logger.log(
-                    "Skipping Yara update",
-                    logtype="info"
-                )
-                print("[!] Skipping Yara update")
-            except Exception as e:
-                self.logger.log(
-                    "Error occurred: " + str(e),
-                    logtype="error"
-                )
+        try:
+            # Create UpdateYara object
+            self.yara_obj = UpdateYara(debug=self.debug,
+                                       config_path=self._CONFIG_PATH)
+            # Start / resume object
+            self.yara_obj.update()
+        except KeyboardInterrupt:
+            self.logger.log(
+                "Skipping Yara update",
+                logtype="info"
+            )
+            print("[!] Skipping Yara update")
+        except Exception as e:
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
     def start_core_process(self):
         """
@@ -226,10 +213,7 @@ class CoreEngine(object):
             for process in self.process_pool:
                 process.terminate()
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
         # After completing all the process
         self.logger.log(
@@ -240,7 +224,7 @@ class CoreEngine(object):
         # Sleep for 10 seconds to reset process
         time.sleep(10)
         # Clear screen
-        print(chr(27) + "[2J")
+        print(f"{chr(27)}[2J")
         # Run the cleaner
         if self.auto_delete:
             # Auto delete all

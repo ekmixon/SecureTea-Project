@@ -81,10 +81,7 @@ def execute_command(command):
     except subprocess.CalledProcessError:
         success = False
 
-    if success:
-        return output.decode("utf-8")
-    else:
-        return None
+    return output.decode("utf-8") if success else None
 
 
 def verify_installation(output):
@@ -123,9 +120,7 @@ def install_dependency(dependency, command):
                        the dependency
     """
     print("[!] installing ", dependency)
-    # install the dependency
-    output = execute_command(command)
-    if output:
+    if output := execute_command(command):
         if verify_installation(output):
             print("[+] ", dependency, " --installed")
         else:
@@ -150,7 +145,7 @@ def check_dependency():
         # if debian
         if system == "debian":
             # command for debian based OS to check installed or not
-            command = "dpkg -s " + dependency + " |grep Status"
+            command = f"dpkg -s {dependency} |grep Status"
             output = execute_command(command)
 
             if output and "install ok installed" in output:

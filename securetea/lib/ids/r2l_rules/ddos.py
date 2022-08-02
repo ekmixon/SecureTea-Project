@@ -121,9 +121,9 @@ class DDoS(object):
             except ZeroDivisionError:
                 calc_count_threshold = int(count)
             try:
-                calc_portlen_threshold = int(len_port / delta_time)
+                calc_portlen_threshold = len_port // delta_time
             except ZeroDivisionError:
-                calc_portlen_threshold = int(len_port)
+                calc_portlen_threshold = len_port
 
             if (calc_count_threshold > self._THRESHOLD or
                 calc_portlen_threshold > self._THRESHOLD):
@@ -194,9 +194,9 @@ class DDoS(object):
             delta_time = int(current_time - start_time)
 
             try:
-                calc_threshold = int(count / delta_time)
+                calc_threshold = count // delta_time
             except ZeroDivisionError:
-                calc_threshold = int(count)
+                calc_threshold = count
 
             if calc_threshold > self._THRESHOLD:
                 self.logger.log(
@@ -219,8 +219,8 @@ class DDoS(object):
         """
         if len(self.simp) == 0:
             return
-        start_ip = [key for key in self.simp.keys()][0]
-        end_ip = [key for key in self.simp.keys()][-1]
+        start_ip = list(self.simp.keys())[0]
+        end_ip = list(self.simp.keys())[-1]
 
         start_time = int(self.simp[start_ip]["start_time"])
         end_time = int(self.simp[end_ip]["start_time"])

@@ -94,10 +94,7 @@ class Hash(object):
             except FileNotFoundError:
                 pass
             except Exception as e:
-                self.logger.log(
-                    "Error occurred: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
         # Return path to hash value dictionary
         return hash_dict
@@ -127,10 +124,7 @@ class Hash(object):
             except FileNotFoundError:
                 pass
             except Exception as e:
-                self.logger.log(
-                    "Error occurred: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
         # Return path to hash value dictionary
         return set_dict

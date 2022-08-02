@@ -53,7 +53,7 @@ class SpiderDetect(object):
         self._THRESHOLD = 50  # inter = 0.02
 
         # List of IPs
-        self.logged_IP = list()
+        self.logged_IP = []
 
         # Initialize OSINT object
         self.osint_obj = OSINT(debug=debug)
@@ -89,20 +89,24 @@ class SpiderDetect(object):
                 calc_count_thresh = count
                 calc_get_thresh = len(data[ip]["unique_get"])
 
-            if (calc_count_thresh > self._THRESHOLD or
-                calc_get_thresh > self._THRESHOLD or
-                self.payload_match(data[ip]["ua"])):
-                if ip not in self.logged_IP:
-                    self.logged_IP.append(ip)
-                    self.logger.log(
-                        "Possible web crawler / spider / bad user agent detected from: " + str(ip),
-                        logtype="warning"
-                    )
-                    utils.write_ip(str(ip))
-                    # Generate CSV report using OSINT tools
-                    self.osint_obj.perform_osint_scan(ip.strip(" "))
-                    # Write malicious IP to file, to teach Firewall about the IP
-                    write_mal_ip(ip.strip(" "))
+            if (
+                (
+                    calc_count_thresh > self._THRESHOLD
+                    or calc_get_thresh > self._THRESHOLD
+                    or self.payload_match(data[ip]["ua"])
+                )
+            ) and ip not in self.logged_IP:
+                self.logged_IP.append(ip)
+                self.logger.log(
+                    f"Possible web crawler / spider / bad user agent detected from: {str(ip)}",
+                    logtype="warning",
+                )
+
+                utils.write_ip(str(ip))
+                # Generate CSV report using OSINT tools
+                self.osint_obj.perform_osint_scan(ip.strip(" "))
+                # Write malicious IP to file, to teach Firewall about the IP
+                write_mal_ip(ip.strip(" "))
 
     def payload_match(self, user_agent):
         """

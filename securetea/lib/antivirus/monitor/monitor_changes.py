@@ -48,7 +48,7 @@ class MonitorChanges(object):
         # Initialize time before (minutes) threshold
         self._THRESHOLD = int(min_time) * 60
         # List of recently modified files
-        self.modified_files = list()
+        self.modified_files = []
         # Salt to encode file name and their time-stamp
         self._SALT = ":@/*&"
         # Time to sleep before next monitoring process
@@ -67,10 +67,7 @@ class MonitorChanges(object):
                 )
                 sys.exit(0)
             except Exception as e:
-                self.logger.log(
-                    "Error occurred: " + str(e),
-                    logtype="error"
-                )
+                self.logger.log(f"Error occurred: {str(e)}", logtype="error")
         else:
             self.logger.log(
                 "Configuration file path not found.",
@@ -149,10 +146,7 @@ class MonitorChanges(object):
         """
         try:
             if self.check_uid(file):
-                self.logger.log(
-                    "File: {} UID not valid".format(file),
-                    logtype="warning"
-                )
+                self.logger.log(f"File: {file} UID not valid", logtype="warning")
 
             current_time = int(time.time())
             modified_time = int(os.path.getmtime(file))
@@ -160,20 +154,19 @@ class MonitorChanges(object):
             time_diff = int(current_time - modified_time)
             salted_file_name = str(file) + self._SALT + str(modified_time)
 
-            if time_diff < self._THRESHOLD:
-                if salted_file_name not in self.done_scanning:
-                    self.modified_files.append(salted_file_name)
-                    self.logger.log(
-                        "File: {} recently modified or created".format(file),
-                        logtype="warning"
-                    )
+            if (
+                time_diff < self._THRESHOLD
+                and salted_file_name not in self.done_scanning
+            ):
+                self.modified_files.append(salted_file_name)
+                self.logger.log(
+                    f"File: {file} recently modified or created", logtype="warning"
+                )
+
         except FileNotFoundError:
             pass
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
     def monitor(self):
         """
@@ -229,7 +222,4 @@ class MonitorChanges(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")

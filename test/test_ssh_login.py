@@ -47,7 +47,7 @@ class TestSSHLogin(unittest.TestCase):
         # Create SSHLogin object
         self.ssh_login_obj = SSHLogin()
         self.ssh_login_obj.update_username_dict('ubnt', '179.39.2.133', 'Jun 1', 1)
-        hashed_username = "ubnt" + self.ssh_login_obj.SALT + "Jun 1"
+        hashed_username = f"ubnt{self.ssh_login_obj.SALT}Jun 1"
         self.assertTrue(self.ssh_login_obj.username_dict.get(hashed_username))
         temp_dict = {
             "ip": ["179.39.2.133"],

@@ -61,18 +61,14 @@ class Scanner(object):
             # Load malicious-file log path
             self._MAL_FILE_PATH = self.config_dict[self.os_name]["scanner"]["malicious_file_log_path"]
 
-        if file_list is not None:
-            self.file_list = file_list
-        else:
-            self.file_list = []
-
+        self.file_list = file_list if file_list is not None else []
         # List of malicious files detected
         try:
             self.malicious_file_list = [file_path.strip("\n") \
-                                        for file_path in utils.open_file(self._MAL_FILE_PATH)]
+                                            for file_path in utils.open_file(self._MAL_FILE_PATH)]
         except FileNotFoundError:
             # Initialize empty list
-            self.malicious_file_list = list()
+            self.malicious_file_list = []
 
         self.vt_api_key = vt_api_key
         if self.vt_api_key and self.vt_api_key != "XXXX":
@@ -118,10 +114,7 @@ class Scanner(object):
                 logtype="info"
             )
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
 
     def check_virus_total(self, file_path):
         """

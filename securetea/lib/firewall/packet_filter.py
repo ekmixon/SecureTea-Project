@@ -111,17 +111,16 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.IP):
-            if (str(scapy_pkt[scapy.IP].src) in self._IP_INBOUND):
-                return {
-                    'action': self._action_inbound_IPRule,
-                    'result': 1
-                }
-            else:
-                return {
-                    'action': self._action_inbound_IPRule,
-                    'result': 0
-                }
+        if not scapy_pkt.haslayer(scapy.IP):
+            return {
+                'action': self._action_inbound_IPRule,
+                'result': 0
+            }
+        if (str(scapy_pkt[scapy.IP].src) in self._IP_INBOUND):
+            return {
+                'action': self._action_inbound_IPRule,
+                'result': 1
+            }
         else:
             return {
                 'action': self._action_inbound_IPRule,
@@ -145,17 +144,16 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.IP):
-            if (str(scapy_pkt[scapy.IP].dst) in self._IP_OUTBOUND):
-                return {
-                    'action': self._action_outbound_IPRule,
-                    'result': 1
-                }
-            else:
-                return {
-                    'action': self._action_outbound_IPRule,
-                    'result': 0
-                }
+        if not scapy_pkt.haslayer(scapy.IP):
+            return {
+                'action': self._action_outbound_IPRule,
+                'result': 0
+            }
+        if (str(scapy_pkt[scapy.IP].dst) in self._IP_OUTBOUND):
+            return {
+                'action': self._action_outbound_IPRule,
+                'result': 1
+            }
         else:
             return {
                 'action': self._action_outbound_IPRule,
@@ -179,18 +177,17 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.IP):
-            if (str(scapy_pkt[scapy.IP].proto) in
-                self._PROTCOLS):
-                return {
-                    'action': self._action_protocolRule,
-                    'result': 1
-                }
-            else:
-                return {
-                    'action': self._action_protocolRule,
-                    'result': 0
-                }
+        if not scapy_pkt.haslayer(scapy.IP):
+            return {
+                'action': self._action_protocolRule,
+                'result': 0
+            }
+        if (str(scapy_pkt[scapy.IP].proto) in
+            self._PROTCOLS):
+            return {
+                'action': self._action_protocolRule,
+                'result': 1
+            }
         else:
             return {
                 'action': self._action_protocolRule,
@@ -214,30 +211,23 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.DNSRR):
-            qname = scapy_pkt[scapy.DNSQR].qname.decode('utf-8')
-            if len(self._DNS):
-                for dns in self._DNS:
-                    if dns in str(qname.strip()):
-                        return {
-                            'action': self._action_DNSRule,
-                            'result': 1
-                        }
-                    else:
-                        return {
-                            'action': self._action_DNSRule,
-                            'result': 0
-                        }
-            else:
-                return {
-                    'action': self._action_DNSRule,
-                    'result': 0
-                }
-        else:
+        if not scapy_pkt.haslayer(scapy.DNSRR):
             return {
                 'action': self._action_DNSRule,
                 'result': 0
             }
+        qname = scapy_pkt[scapy.DNSQR].qname.decode('utf-8')
+        if not len(self._DNS):
+            return {
+                'action': self._action_DNSRule,
+                'result': 0
+            }
+        for dns in self._DNS:
+            return (
+                {'action': self._action_DNSRule, 'result': 1}
+                if dns in str(qname.strip())
+                else {'action': self._action_DNSRule, 'result': 0}
+            )
 
     @utils.xnor
     def source_portRule(self, scapy_pkt):
@@ -256,17 +246,16 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.Raw):
-            if str(scapy_pkt[scapy.TCP].sport) in self._SPORTS:
-                return {
-                    'action': self._action_source_portRule,
-                    'result': 1
-                }
-            else:
-                return {
-                    'action': self._action_source_portRule,
-                    'result': 0
-                }
+        if not scapy_pkt.haslayer(scapy.Raw):
+            return {
+                'action': self._action_source_portRule,
+                'result': 0
+            }
+        if str(scapy_pkt[scapy.TCP].sport) in self._SPORTS:
+            return {
+                'action': self._action_source_portRule,
+                'result': 1
+            }
         else:
             return {
                 'action': self._action_source_portRule,
@@ -290,17 +279,16 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.Raw):
-            if str(scapy_pkt[scapy.TCP].dport) in self._DPORTS:
-                return {
-                    'action': self._action_dest_portRule,
-                    'result': 1
-                }
-            else:
-                return {
-                    'action': self._action_dest_portRule,
-                    'result': 0
-                }
+        if not scapy_pkt.haslayer(scapy.Raw):
+            return {
+                'action': self._action_dest_portRule,
+                'result': 0
+            }
+        if str(scapy_pkt[scapy.TCP].dport) in self._DPORTS:
+            return {
+                'action': self._action_dest_portRule,
+                'result': 1
+            }
         else:
             return {
                 'action': self._action_dest_portRule,
@@ -325,12 +313,7 @@ class PacketFilter(object):
         """
         try:
             if scapy_pkt.haslayer(scapy.Raw):
-                if scapy_pkt[scapy.TCP].dport == 80:
-                    # User defined action
-                    return self._action_HTTPRequest
-                else:
-                    # Allow if not found
-                    return 1
+                return self._action_HTTPRequest if scapy_pkt[scapy.TCP].dport == 80 else 1
             else:
                 # Allow if not found
                 return 1
@@ -359,12 +342,7 @@ class PacketFilter(object):
         """
         try:
             if scapy_pkt.haslayer(scapy.Raw):
-                if scapy_pkt[scapy.TCP].sport == 80:
-                    # User defined action
-                    return self._action_HTTPResponse
-                else:
-                    # Allow if not found
-                    return 1
+                return self._action_HTTPResponse if scapy_pkt[scapy.TCP].sport == 80 else 1
             else:
                 # Allow if not found
                 return 1
@@ -392,29 +370,22 @@ class PacketFilter(object):
                 'action': User specified action
                 'result': Rule matched or not
         """
-        if scapy_pkt.haslayer(scapy.Raw):
-            if scapy_pkt[scapy.TCP].dport == 80:
-                for extension in self.extensions:
-                    if extension in scapy_pkt[scapy.Raw].load:
-                        return {
-                            'action': self._action_scanLoad,
-                            'result': 1
-                        }
-                    else:
-                        return {
-                            'action': self._action_scanLoad,
-                            'result': 0
-                        }
-            else:
-                return {
-                    'action': self._action_scanLoad,
-                    'result': 0
-                }
-        else:
+        if not scapy_pkt.haslayer(scapy.Raw):
             return {
                 'action': self._action_scanLoad,
                 'result': 0
             }
+        if scapy_pkt[scapy.TCP].dport != 80:
+            return {
+                'action': self._action_scanLoad,
+                'result': 0
+            }
+        for extension in self.extensions:
+            return (
+                {'action': self._action_scanLoad, 'result': 1}
+                if extension in scapy_pkt[scapy.Raw].load
+                else {'action': self._action_scanLoad, 'result': 0}
+            )
 
     @staticmethod
     def check_first_fragment(pkt):
@@ -432,13 +403,12 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if (pkt.haslayer(scapy.IP)):
-            if ((str(pkt[scapy.IP].flags) == "MF") and
-                int(pkt[scapy.IP].frag) == 0 and
-                int(pkt[scapy.IP].len) < 120):
-                return 0
-            else:
-                return 1
+        if not (pkt.haslayer(scapy.IP)):
+            return 1
+        if ((str(pkt[scapy.IP].flags) == "MF") and
+            int(pkt[scapy.IP].frag) == 0 and
+            int(pkt[scapy.IP].len) < 120):
+            return 0
         else:
             return 1
 
@@ -456,15 +426,10 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if (pkt.haslayer(scapy.IP)):
-            version = int(pkt[scapy.IP].version)
-            if (version == 4 or
-                version == 6):
-                return 1
-            else:
-                return 0
-        else:
+        if not (pkt.haslayer(scapy.IP)):
             return 1
+        version = int(pkt[scapy.IP].version)
+        return 1 if version in {4, 6} else 0
 
     @staticmethod
     def check_ip_fragment_boundary(pkt):
@@ -482,11 +447,12 @@ class PacketFilter(object):
             bool (int): Allow or drop
         """
         if (pkt.haslayer(scapy.IP)):
-            if ((int(pkt[scapy.IP].len) +
-                int(pkt[scapy.IP].frag)) > 65355):
-                return 0
-            else:
-                return 1
+            return (
+                0
+                if ((int(pkt[scapy.IP].len) + int(pkt[scapy.IP].frag)) > 65355)
+                else 1
+            )
+
         else:
             return 1
 
@@ -505,14 +471,10 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if (pkt.haslayer(scapy.IP)):
-            frag = int(pkt[scapy.IP].frag)
-            if (frag < 60 and frag > 0):
-                return 0
-            else:
-                return 1
-        else:
+        if not (pkt.haslayer(scapy.IP)):
             return 1
+        frag = int(pkt[scapy.IP].frag)
+        return 0 if (frag < 60 and frag > 0) else 1
 
     @staticmethod
     def check_invalid_ip(pkt):
@@ -529,15 +491,12 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if (pkt.haslayer(scapy.IP)):
-            source_ip = pkt[scapy.IP].src
-            if (utils.check_ip(source_ip) and
-                str(source_ip) != "0.0.0.0"):
-                return 1
-            else:
-                return 0
-        else:
+        if not (pkt.haslayer(scapy.IP)):
             return 1
+        source_ip = pkt[scapy.IP].src
+        return (
+            1 if (utils.check_ip(source_ip) and str(source_ip) != "0.0.0.0") else 0
+        )
 
     @staticmethod
     def check_ip_header_length(pkt):
@@ -554,14 +513,10 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if (pkt.haslayer(scapy.IP)):
-            hlen = pkt[scapy.IP].len
-            if int(hlen) < 20:
-                return 0
-            else:
-                return 1
-        else:
+        if not (pkt.haslayer(scapy.IP)):
             return 1
+        hlen = pkt[scapy.IP].len
+        return 0 if int(hlen) < 20 else 1
 
     @staticmethod
     def icmp_fragmentation_attack(pkt):
@@ -579,19 +534,13 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if pkt.haslayer(scapy.IP):
-            proto = int(pkt[scapy.IP].proto)
-            if proto == 1:
-                flags = str(pkt[scapy.IP].flags)
-                frag = int(pkt[scapy.IP].frag)
-                if (flags == "MF" or frag > 0):
-                    return 0
-                else:
-                    return 1
-            else:
-                return 1
-        else:
+        if not pkt.haslayer(scapy.IP):
             return 1
+        proto = int(pkt[scapy.IP].proto)
+        if proto != 1:
+            return 1
+        flags = str(pkt[scapy.IP].flags)
+        return 0 if flags == "MF" or int(pkt[scapy.IP].frag) > 0 else 1
 
     @staticmethod
     def check_large_icmp(pkt):
@@ -608,16 +557,11 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if pkt.haslayer(scapy.IP):
-            proto = int(pkt[scapy.IP].proto)
-            if proto == 1:
-                hlen = int(pkt[scapy.IP].len)
-                if (hlen > 1024):
-                    return 0
-                else:
-                    return 1
-            else:
-                return 1
+        if not pkt.haslayer(scapy.IP):
+            return 1
+        proto = int(pkt[scapy.IP].proto)
+        if proto == 1:
+            return 0 if int(pkt[scapy.IP].len) > 1024 else 1
         else:
             return 1
 
@@ -637,20 +581,13 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if (pkt.haslayer(scapy.IP) and
-            pkt.haslayer(scapy.TCP)):
-            tcp_flag = pkt[scapy.TCP].flags
-            if tcp_flag == "S":
-                flags = str(pkt[scapy.IP].flags)
-                frag = int(pkt[scapy.IP].frag)
-                if (flags == "MF" or frag > 0):
-                    return 0
-                else:
-                    return 1
-            else:
-                return 1
-        else:
+        if not pkt.haslayer(scapy.IP) or not pkt.haslayer(scapy.TCP):
             return 1
+        tcp_flag = pkt[scapy.TCP].flags
+        if tcp_flag != "S":
+            return 1
+        flags = str(pkt[scapy.IP].flags)
+        return 0 if flags == "MF" or int(pkt[scapy.IP].frag) > 0 else 1
 
     @staticmethod
     def check_fin_ack(pkt):
@@ -668,18 +605,10 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if pkt.haslayer(scapy.TCP):
-            flag = str(pkt[scapy.TCP].flags)
-            if "F" in flag:
-                if (flag == "FA" or
-                    flag == "AF"):
-                    return 1
-                else:
-                    return 0
-            else:
-                return 1
-        else:
+        if not pkt.haslayer(scapy.TCP):
             return 1
+        flag = str(pkt[scapy.TCP].flags)
+        return 1 if "F" in flag and flag in {"FA", "AF"} or "F" not in flag else 0
 
     @staticmethod
     def check_tcp_flag(pkt):
@@ -696,14 +625,10 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if pkt.haslayer(scapy.TCP):
-            flag = pkt[scapy.TCP].flags
-            if flag is None:
-                return 0
-            else:
-                return 1
-        else:
+        if not pkt.haslayer(scapy.TCP):
             return 1
+        flag = pkt[scapy.TCP].flags
+        return 0 if flag is None else 1
 
     @staticmethod
     def check_network_congestion(pkt):
@@ -721,15 +646,10 @@ class PacketFilter(object):
         Returns:
             bool (int): Allow or drop
         """
-        if pkt.haslayer(scapy.TCP):
-            flag = str(pkt[scapy.TCP].flags)
-            if (flag == "EC" or
-                flag == "ECE"):
-                return 0
-            else:
-                return 1
-        else:
+        if not pkt.haslayer(scapy.TCP):
             return 1
+        flag = str(pkt[scapy.TCP].flags)
+        return 0 if flag in {"EC", "ECE"} else 1
 
     def check_mal_ip(self, pkt):
         """
@@ -793,15 +713,14 @@ class PacketFilter(object):
             self.check_network_congestion(scapy_pkt) and
             self.check_mal_ip(scapy_pkt)):
             return 1
-        else:
-            self.logger.log(
-                "Packet blocked.",
-                logtype="info"
-            )
-            # PCAP dumping of rejected packets
-            self.pktdump.write(scapy_pkt)
-            # Generate report using OSINT tools
-            src_ip = scapy_pkt[scapy.IP].src
-            src_ip = src_ip.strip(" ")
-            self.osint_obj.perform_osint_scan(src_ip)
-            return 0
+        self.logger.log(
+            "Packet blocked.",
+            logtype="info"
+        )
+        # PCAP dumping of rejected packets
+        self.pktdump.write(scapy_pkt)
+        # Generate report using OSINT tools
+        src_ip = scapy_pkt[scapy.IP].src
+        src_ip = src_ip.strip(" ")
+        self.osint_obj.perform_osint_scan(src_ip)
+        return 0

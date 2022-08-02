@@ -104,7 +104,4 @@ class SecureTeaAntiVirus(object):
             )
             self.core_engine_obj.start_engine()
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")

@@ -62,9 +62,10 @@ class UpdateHash(object):
                 self._HASH_STORAGE = self.config_dict[self.os_name]["update"]["hash"]["storage"]
             except KeyError:
                 self.logger.log(
-                    "Could not load configuration for: {}".format(self.os_name),
-                    logtype="error"
+                    f"Could not load configuration for: {self.os_name}",
+                    logtype="error",
                 )
+
                 sys.exit(0)
             # VirusShare Base URL Path
             self._HASH_URL = "https://www.virusshare.com/hashes/VirusShare_%05d.md5"
@@ -129,7 +130,7 @@ class UpdateHash(object):
         if last_file_num < self._MAX:
             # Start downloading the hashes from the last index number
             self.download(last_file_num + 1, self._MAX)
-        elif last_file_num >= self._MAX:
+        else:
             print("[!] Hash Signatures upto date")
             self.logger.log(
                 "Hash Signatures upto date",

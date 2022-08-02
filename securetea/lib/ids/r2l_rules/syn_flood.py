@@ -95,7 +95,7 @@ class SynFlood(object):
         """
         if len(self.syn_dict) == 0:  # If syn dict is not empty
             return
-        start_ip = [ip for ip in self.syn_dict.keys()][0]
+        start_ip = list(self.syn_dict.keys())[0]
         start_time = self.syn_dict[start_ip]["start_time"]
         current_time = time.time()
         delta_time = int(current_time - start_time)
@@ -103,9 +103,9 @@ class SynFlood(object):
         size_of_syn_dict = len(self.syn_dict)
 
         try:
-            calc_threshold = int(size_of_syn_dict / delta_time)
+            calc_threshold = size_of_syn_dict // delta_time
         except ZeroDivisionError:
-            calc_threshold = int(size_of_syn_dict)
+            calc_threshold = size_of_syn_dict
 
         if (calc_threshold >= self._THRESHOLD):
             self.logger.log(

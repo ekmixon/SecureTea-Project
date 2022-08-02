@@ -57,8 +57,12 @@ class SecureTeaTelegram():
         Returns:
             None
         """
-        message = (str(msg) + " at " + common.getdatetime() +
-                   " " + common.get_current_location() + common.get_platform())
+        message = (
+            (f"{str(msg)} at {common.getdatetime()}" + " ")
+            + common.get_current_location()
+            + common.get_platform()
+        )
+
 
         bot = telegram.Bot(token=self.token)
         bot.send_message(chat_id=self.user_id, text=message)

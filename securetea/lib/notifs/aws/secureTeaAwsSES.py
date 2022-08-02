@@ -64,8 +64,12 @@ class SecureTeaAwsSES():
         Returns:
             None
         """
-        message = (str(msg) + " at " + common.getdatetime() +
-                   " " + common.get_current_location() + common.get_platform())
+        message = (
+            (f"{str(msg)} at {common.getdatetime()}" + " ")
+            + common.get_current_location()
+            + common.get_platform()
+        )
+
 
         html_str = ("<html><head></head><body><h1>Security Alert</h1><p>" +
                     message +

@@ -49,9 +49,12 @@ class SecureTeaLogger():
         """
 
         self.modulename = modulename
-        self.LEGEND = self.VIOLET + '[' + self.modulename + ']' + \
-            '  ' + self.YELLOW + '[ ' + \
-            str(time.strftime("%Y-%m-%d %H:%M")) + ' ]  '
+        self.LEGEND = (
+            (((f'{self.VIOLET}[{self.modulename}]' + '  ') + self.YELLOW) + '[ ')
+            + str(time.strftime("%Y-%m-%d %H:%M"))
+            + ' ]  '
+        )
+
         self.debug = debug
 
     def printinfo(self, message):
@@ -61,7 +64,7 @@ class SecureTeaLogger():
             message (str): Message to log as info
         """
         print(self.LEGEND + self.OKGREEN + message + self.ENDC)
-        param = {"msg": "S" + message}
+        param = {"msg": f"S{message}"}
         try:
             resp = req.get("http://127.0.0.1:5000/notifs", params=param)
         except req.exceptions.ConnectionError:
@@ -74,7 +77,7 @@ class SecureTeaLogger():
             message (str): Message to log as error
         """
         print(self.LEGEND + self.ERROR + message + self.ENDC)
-        param = {"msg": "E" + message}
+        param = {"msg": f"E{message}"}
         try:
             resp = req.get("http://127.0.0.1:5000/notifs", params=param)
         except req.exceptions.ConnectionError:
@@ -87,7 +90,7 @@ class SecureTeaLogger():
             message (str): Message to log as warning
         """
         print(self.LEGEND + self.WARNING + message + self.ENDC)
-        param = {"msg": "W" + message}
+        param = {"msg": f"W{message}"}
         try:
             resp = req.get("http://127.0.0.1:5000/notifs", params=param)
         except req.exceptions.ConnectionError:

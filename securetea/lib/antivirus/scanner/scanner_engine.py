@@ -54,12 +54,7 @@ class ScannerEngine(object):
             )
             sys.exit(0)
 
-        if file_list:
-            self.file_list = file_list
-        else:
-            # Initialize an empty list
-            self.file_list = []
-
+        self.file_list = file_list or []
         # Create HashScanner object
         self.hash_scanner = HashScanner(debug=debug,
                                         config_path=self._CONFIG_PATH,
@@ -148,8 +143,5 @@ class ScannerEngine(object):
                 return True
 
         except Exception as e:
-            self.logger.log(
-                "Error occurred: " + str(e),
-                logtype="error"
-            )
+            self.logger.log(f"Error occurred: {str(e)}", logtype="error")
             return True
